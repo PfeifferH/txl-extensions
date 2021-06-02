@@ -4,11 +4,24 @@
 
 include "../grammars/Turing.Grm"
 
+function main
+    replace [program]
+        P [program]
+    by
+        P [simplifyExp]
+end function
+
 rule simplifyExp
     replace [repeat declaration_or_statement]
-        x [id] := e1 [expn]
-        if x < 0 then x := 0 end if
-        if x > e2 [expn] then x := e2 end if
+        'var x [id] ':= e1 [expn]
+        'if x '< 0 'then 
+            x ':= 0 
+        'end 'if
+        'if x '> e2 [expn] 'then 
+            x ':= e2 
+        'end 'if
+    construct newExp [repeat declaration_or_statement]
+        'var x ':= 'min(0 ', 'max( e1 ', e2 '))
     by
-        x := max (0, min (e1, e2))
+        newExp [debug]
 end rule
