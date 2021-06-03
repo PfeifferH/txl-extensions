@@ -1,3 +1,5 @@
+put "Start"
+
 var x := 6 + 7
 
 if x < 0 then 
@@ -8,3 +10,4 @@ if x > 8 - 5 then
 end if
 
 put x
+put "End"

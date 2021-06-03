@@ -170,6 +170,10 @@ define RESET
 	[EX][EX][EX][EX][EX][EX][EX][EX][EX]
 end define
 
+define dotDotDot
+	'... 
+end define
+
 define dotDotDotBar 
 	'... [EX][NL] '| [TAB][IN] 
 end define 
@@ -323,7 +327,8 @@ define skippingType
 end define 
 
 define pattern 
-	[repeat literalOrVariable] 		[NL]
+	[dotDotDot] [repeat literalOrVariable] [dotDotDot]
+	| [repeat literalOrVariable] 		[NL]
 end define 
 
 define literalOrVariable 
@@ -333,7 +338,8 @@ define literalOrVariable
 end define 
 
 define replacement 
-	[repeat literalOrExpression] 		[NL]
+	[dotDotDot] [repeat literalOrExpression] [dotDotDot]
+	| [repeat literalOrExpression] 		[NL]
 end define 
 
 define literalOrExpression 
