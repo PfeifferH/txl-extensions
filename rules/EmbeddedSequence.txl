@@ -7,10 +7,8 @@ include "../grammars/txl.grm"
 function main
     replace [program]
         P [program]
-    construct newP [program]
-        P [resolveEmbed]
     by
-        newP 
+        P [resolveEmbed] 
 end function
 
 rule resolveEmbed
@@ -24,16 +22,16 @@ rule resolveEmbed
                 '...
                 RuleReplacement [repeat literalOrExpression]
                 '... 
-        'end 'rule       
-    construct newRule [ruleStatement]
+        'end 'rule
+    construct TempPatternVar [repeat literalOrVariable]
+        'Temp '[ 'repeat RuleType']
+    construct TempReplacementVar [repeat literalOrExpression]
+        'Temp
+    by
         'rule RuleName 
             'replace '[ 'repeat RuleType']
-                RulePattern 
-                'Temp '[ 'repeat RuleType']
+                RulePattern [. TempPatternVar] 
             'by
-                ruleReplacement 
-                'Temp  
-        'end 'rule     
-    by
-        newRule [debug] 
+                RuleReplacement [. TempReplacementVar]  
+        'end 'rule  
 end rule
