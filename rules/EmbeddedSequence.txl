@@ -2,7 +2,7 @@
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../grammars/txl.grm"
+include "../grammars/extensions.grm"
 
 function main
     replace [program]
