@@ -9,15 +9,15 @@ define dotDotDot
 end define
 
 redefine pattern 
-	[dotDotDot]		[NL] 
-	[repeat literalOrVariable]		[NL] 	
+	[pattern]		[NL]
 	[dotDotDot]		[NL]
+	[pattern]		[NL] 	
 	| [repeat literalOrVariable] 		[NL]
 end define 
 
 redefine replacement 
-	[dotDotDot]		[NL] 
-	[repeat literalOrExpression]	[NL] 
+	[replacement]	[NL]
 	[dotDotDot]		[NL]
+	[replacement]	[NL]
 	| [repeat literalOrExpression] 		[NL]
 end define 
