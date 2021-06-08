@@ -7,22 +7,32 @@ include "../grammars/extensions.grm"
 function main
     replace [program]
         P [program]
+    construct newP [program]
+        P [resolveEmbed]
     by
-        P [resolveEmbed] 
+        newP 
 end function
 
 rule resolveEmbed
     replace [ruleStatement]
         'rule RuleName [ruleid]
             'replace '[ 'repeat RuleType [typeid]']
-                '...
-                RulePattern [repeat literalOrVariable]
-                '...
+                RulePattern [pattern]
             'by
-                '...
-                RuleReplacement [repeat literalOrExpression]
-                '... 
+                RuleReplacement [replacement]    
         'end 'rule
+    construct debugMessage [pattern]
+        RulePattern [debug]
+    assert
+        RulePattern [verifyDots RuleReplacement] [verifyNoDots RuleReplacement]
+    deconstruct RulePattern
+        '...
+        Pattern [repeat literalOrVariable]
+        '...
+    deconstruct RuleReplacement
+        '...
+        Replacement [repeat literalOrExpression]
+        '...
     construct TempPatternVar [repeat literalOrVariable]
         'Temp '[ 'repeat RuleType']
     construct TempReplacementVar [repeat literalOrExpression]
@@ -30,8 +40,24 @@ rule resolveEmbed
     by
         'rule RuleName 
             'replace '[ 'repeat RuleType']
-                RulePattern [. TempPatternVar] 
+                Pattern [. TempPatternVar] 
             'by
-                RuleReplacement [. TempReplacementVar]  
+                Replacement [. TempReplacementVar]  
         'end 'rule  
 end rule
+
+function verifyDots RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        '...
+        _ [repeat literalOrExpression]
+        '...
+    match * [dotDotDot]
+        '...
+end function
+
+function verifyNoDots RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        _ [repeat literalOrExpression]
+    match * [pattern]
+        _ [pattern]
+end function
