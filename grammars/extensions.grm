@@ -8,26 +8,20 @@ define dotDotDot
 	'... 
 end define
 
+define optDotDotDot
+	[opt dotDotDot]
+end define
+
 redefine pattern
-	[dotDotDot]		[NL]
 	|  [dotDotDot]		[NL]
 	   [repeat literalOrVariable] 		[NL]
 	   [dotDotDot]		[NL]
 	|  [repeat literalOrVariable]		[NL]
-	   [dotDotDot]		[NL]
-	|  [dotDotDot]		[NL]
-	   [repeat literalOrVariable]		[NL]
-	|  [repeat literalOrVariable]		[NL]
-end define 
+end define
 
 redefine replacement 
-	[dotDotDot]		[NL]
 	|  [dotDotDot]		[NL]
-	   [repeat literalOrExpression] 		[NL]
+	   [repeat literalOrExpression] 	[NL]
 	   [dotDotDot]		[NL]
-	|  [repeat literalOrExpression]		[NL]
-	   [dotDotDot]		[NL]
-	|  [dotDotDot]		[NL]
-	   [repeat literalOrExpression]		[NL]
 	|  [repeat literalOrExpression]		[NL]
 end define 
