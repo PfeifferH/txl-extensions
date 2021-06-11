@@ -18,7 +18,7 @@ end define
 
 redefine pattern
 	[dotDotDot]		[NL]
-	[repeat literalOrVariable] 		[NL]
+	[repeat literalOrVariable+] 		[NL]
 	[dotDotDot]		[NL]
 	|  [repeat literalOrVariable]		[NL]
 end define
