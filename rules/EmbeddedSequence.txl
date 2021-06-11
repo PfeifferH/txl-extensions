@@ -23,8 +23,6 @@ rule resolveEmbed
         'end 'rule
     construct debugMessage [pattern]
         RulePattern [debug]
-    assert
-        RulePattern [verifyDots RuleReplacement] [verifyNoDots RuleReplacement]
     deconstruct RulePattern
         '...
         Pattern [repeat literalOrVariable]
@@ -32,7 +30,7 @@ rule resolveEmbed
     deconstruct RuleReplacement
         '...
         Replacement [repeat literalOrExpression]
-        '...
+        _ [opt dotDotDot]
     construct TempPatternVar [repeat literalOrVariable]
         'Temp '[ 'repeat RuleType']
     construct TempReplacementVar [repeat literalOrExpression]
