@@ -1,4 +1,4 @@
-% ReplaceSingle.txl: Replace a variable declaration with its inverse
+% ReplaceSingle.txl: Delete multiple Turing statements
 % Hayden Pfeiffer
 % Queen's University, June 2021
 

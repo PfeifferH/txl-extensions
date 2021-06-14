@@ -1,4 +1,4 @@
-% SimplifyExpression.txl: Example of a TXL rule to transform to match embedded sequences. After transformation, output should yield SimplifyExpressionTarget.txl
+% ReplaceMulti.txl: Replace multiple statements with single statement
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
