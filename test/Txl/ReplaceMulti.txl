@@ -25,5 +25,8 @@ rule simplifyExp
     by
         ...
         'var x ':= 'min(0 ', 'max( e1 ', e2 '))
+        'if x '< 0 'then 
+            x ':= 0 
+        'end 'if
         ...
 end rule
