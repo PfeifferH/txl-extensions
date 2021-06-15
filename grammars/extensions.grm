@@ -17,15 +17,15 @@ define optDotDotDot
 end define
 
 redefine pattern
-	[dotDotDot]		[NL]
+	[dotDotDot]							[NL]
 	[repeat literalOrVariable+] 		[NL]
-	[dotDotDot]		[NL]
+	[dotDotDot]							[NL]
 	|  [repeat literalOrVariable]		[NL]
 end define
 
 redefine replacement 
-	[dotDotDot]		[NL]
-	[repeat literalOrExpression] 	[NL]
-	[opt dotDotDot]		[NL]
+	[opt dotDotDot]							[NL]
+	[repeat literalOrExpression] 		[NL]
+	[dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]
 end define 

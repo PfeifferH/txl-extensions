@@ -21,16 +21,14 @@ rule resolveEmbed
             'by
                 RuleReplacement [replacement]    
         'end 'rule
-    construct debugMessage [pattern]
-        RulePattern [debug]
     deconstruct RulePattern
         '...
         Pattern [repeat literalOrVariable]
         '...
     deconstruct RuleReplacement
-        '...
-        Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
+        Replacement [repeat literalOrExpression]
+        '...
     construct TempPatternVar [repeat literalOrVariable]
         'Temp '[ 'repeat RuleType']
     construct TempReplacementVar [repeat literalOrExpression]
@@ -46,7 +44,7 @@ end rule
 
 function verifyDots RuleReplacement [replacement]
     deconstruct RuleReplacement
-        '...
+        _ [opt dotDotDot]
         _ [repeat literalOrExpression]
         '...
     match * [dotDotDot]
