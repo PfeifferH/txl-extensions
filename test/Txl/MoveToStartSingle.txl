@@ -1,4 +1,4 @@
-% AddMulti.txl: Add multiple statements onto a single statement
+% MoveToStartSingle.txl: Move a single statement from a list 
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -17,13 +17,6 @@ rule simplifyExp
         'var x [id] ':= e1 [expn]
         ...
     by
-        ...
         'var x ':= e1
-        'if x '< 0 'then 
-            x ':= 0 
-        'end 'if
-        'if x '> 10 'then
-            x ':= x '* 2
-        'end 'if
         ...
 end rule
