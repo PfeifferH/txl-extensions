@@ -29,16 +29,19 @@ rule resolveEmbed
         HeadDotDotDot [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         '...
+    
     construct TempHeadPatternVar [repeat literalOrVariable]
-        'Head '[ 'repeat RuleType ']
+        'Head '[ RuleType ']
+    construct TempTailPatternVar [repeat literalOrVariable]
+        'Tail '[ 'repeat RuleType ']
     construct TempPatternVar [repeat literalOrVariable]
-        'Temp '[ 'repeat RuleType ']
+        TempHeadPatternVar [. Pattern] [. TempTailPatternVar]
     construct TempReplacementVar [repeat literalOrExpression]
         'Temp
     by
         'rule RuleName 
             'replace '[ 'repeat RuleType']
-                Pattern [. TempPatternVar] 
+                TempPatternVar
             'by
                 Replacement [. TempReplacementVar]  
         'end 'rule  
