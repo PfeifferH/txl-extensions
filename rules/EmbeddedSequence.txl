@@ -29,36 +29,44 @@ rule resolveEmbed
         HeadDotDotDot [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         '...
-    
-    construct TempHeadPatternVar [repeat literalOrVariable]
-        'Head '[ RuleType ']
-    construct TempTailPatternVar [repeat literalOrVariable]
-        'Tail '[ 'repeat RuleType ']
-    construct TempPatternVar [repeat literalOrVariable]
-        TempHeadPatternVar [. Pattern] [. TempTailPatternVar]
-    construct TempReplacementVar [repeat literalOrExpression]
-        'Temp
+    construct Tail [repeat literalOrExpression]
+        'Tail
     by
         'rule RuleName 
             'replace '[ 'repeat RuleType']
-                TempPatternVar
+                RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType]
             'by
-                Replacement [. TempReplacementVar]  
+                Replacement [. Tail]  
         'end 'rule  
 end rule
 
-function verifyDots RuleReplacement [replacement]
+rule constructPattern RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
-        _ [opt dotDotDot]
+        '...
         _ [repeat literalOrExpression]
         '...
-    match * [dotDotDot]
+    construct Tail [literalOrVariable]
+        'Tail '[ 'repeat RuleType ']
+    replace [pattern]
         '...
-end function
+        Pattern [repeat literalOrVariable]
+        '...
+    by
+        Pattern [. Tail]
+end rule
 
-function verifyNoDots RuleReplacement [replacement]
+rule constructPatternWithHead RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
         _ [repeat literalOrExpression]
-    match * [pattern]
-        _ [pattern]
-end function
+        '...
+    construct Head [repeat literalOrVariable]
+        'Head '[ RuleType ']
+    construct Tail [literalOrVariable]
+        'Tail '[ 'repeat RuleType ']        
+    replace [pattern]
+        '...
+        Pattern [repeat literalOrVariable]
+        '...
+    by
+        Head [. Pattern] [. Tail]
+end rule
