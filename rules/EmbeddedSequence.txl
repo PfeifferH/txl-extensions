@@ -26,7 +26,7 @@ rule resolveEmbed
         Pattern [repeat literalOrVariable]
         '...
     deconstruct RuleReplacement
-        HeadDotDotDot [opt dotDotDot]
+        _ [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         '...
     construct Tail [repeat literalOrExpression]
@@ -36,7 +36,7 @@ rule resolveEmbed
             'replace '[ 'repeat RuleType']
                 RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType]
             'by
-                Replacement [. Tail]  
+                RuleReplacement [constructReplacement] [constructReplacementWithHead]
         'end 'rule  
 end rule
 
@@ -69,4 +69,27 @@ rule constructPatternWithHead RuleReplacement [replacement] RuleType [typeid]
         '...
     by
         Head [. Pattern] [. Tail]
+end rule
+
+rule constructReplacement
+    construct Tail [repeat literalOrExpression]
+        'Tail
+    replace [replacement]
+        '...
+        Replacement [repeat literalOrExpression]
+        '...
+    by
+        Replacement [. Tail]
+end rule
+
+rule constructReplacementWithHead
+    construct Head [repeat literalOrExpression]
+        'Head
+    construct Tail [repeat literalOrExpression]
+        'Tail
+    replace [replacement]
+        Replacement [repeat literalOrExpression]
+        '...
+    by
+        Replacement [. Head] [. Tail]
 end rule
