@@ -26,6 +26,6 @@ end define
 redefine replacement 
 	[opt dotDotDot]							[NL]
 	[repeat literalOrExpression] 		[NL]
-	[dotDotDot]						[NL]
+	[opt dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]
 end define 
