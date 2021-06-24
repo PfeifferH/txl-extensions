@@ -30,14 +30,14 @@ rule resolveEmbed
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
     construct optDeconstruct [repeat constructDeconstructImportExportOrCondition]
-        _ [deconstructPattern Pattern RuleReplacement] [noDeconstruct]
+        _ [deconstructPattern Pattern RuleReplacement RuleType] [noDeconstruct]
 
     construct Tail [repeat literalOrExpression]
         'Tail
     by
         'rule RuleName 
             'replace '[ 'repeat RuleType']
-                RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] [constructPatternWithStmts RuleReplacement RuleType]
+                RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
             optDeconstruct
             'by
                 RuleReplacement [constructReplacement] [constructReplacementWithHead] [constructReplacementMoveToEnd]
@@ -48,9 +48,9 @@ rule constructPattern RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
         '...
         _ [repeat literalOrExpression]
-        '...
+        _ [opt dotDotDot]
     construct Tail [literalOrVariable]
-        'Tail '[ 'repeat RuleType '+']
+        'Tail '[ 'repeat RuleType ']
     replace [pattern]
         '...
         Pattern [repeat literalOrVariable]
@@ -116,7 +116,7 @@ end rule
 
 rule constructReplacementMoveToEnd
     construct Tail [repeat literalOrExpression]
-        'Tail '['. 'Stmts ']
+        'Tail '['. 'Pattern ']
     replace [replacement]
         '...
         Replacement [repeat literalOrExpression]
@@ -124,14 +124,15 @@ rule constructReplacementMoveToEnd
         Tail
 end rule
 
-function deconstructPattern Pattern [repeat literalOrVariable] RuleReplacement [replacement]
+function deconstructPattern Pattern [repeat literalOrVariable] RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
         '...
-        _ [repeat literalOrExpression+]
+        Replacement [repeat literalOrExpression]
     replace [repeat constructDeconstructImportExportOrCondition]
     by
-        'deconstruct 'Stmts
-            Pattern
+        'deconstruct 'not 'Tail
+        'construct 'Pattern '[ 'repeat RuleType ']
+            Replacement
 end function
 
 function noDeconstruct
