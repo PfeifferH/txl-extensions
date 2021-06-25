@@ -1,4 +1,4 @@
-% SimplifyExpressionTarget.txl: Example of a TXL rule to match an embedded sequence of declarations and statements. The output of SimplifyExpression.txl should yield this result
+% MoveToStartTargetressionTarget.txl: Example of a TXL rule to match an embedded sequence of declarations and statements. The output of MoveToStartTargetression.txl should yield this result
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,10 +8,10 @@ function main
     replace [program]
         P [program]
     by
-        P [simplifyExp]
+        P [MoveToStartTarget]
 end function
 
-rule simplifyExp
+rule MoveToStartTarget
     replace [repeat declaration_or_statement]
         Head [declaration_or_statement]
         IfStmt [if_statement]

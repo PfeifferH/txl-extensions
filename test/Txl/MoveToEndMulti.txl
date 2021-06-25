@@ -8,10 +8,10 @@ function main
     replace [program]
         P [program]
     by
-        P [simplifyExp]
+        P [MoveToEndMulti]
 end function
 
-rule simplifyExp
+rule MoveToEndMulti
     replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]

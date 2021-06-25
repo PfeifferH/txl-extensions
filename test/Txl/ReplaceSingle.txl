@@ -8,10 +8,10 @@ function main
     replace [program]
         P [program]
     by
-        P [simplifyExp]
+        P [ReplaceSingle]
 end function
 
-rule simplifyExp
+rule ReplaceSingle
     replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
