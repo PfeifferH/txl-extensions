@@ -11,7 +11,7 @@ function main
         P [AddMulti]
 end function
 
-rule AddMulti
+function AddMulti
     replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
@@ -26,4 +26,4 @@ rule AddMulti
             x ':= x '* 2
         'end 'if
         ...
-end rule
+end function

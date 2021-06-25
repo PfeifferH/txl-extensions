@@ -11,7 +11,7 @@ function main
         P [AddSingle]
 end function
 
-rule AddSingle
+function AddSingle
     replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
@@ -23,4 +23,4 @@ rule AddSingle
             x ':= 0 
         'end 'if
         ...
-end rule
+end function
