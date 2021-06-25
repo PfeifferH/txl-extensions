@@ -22,4 +22,7 @@ rule MoveToEndMulti
     by
         ...
         'var x ':= e1
+        'if x '< 0 'then 
+            x ':= 0 
+        'end 'if
 end rule
