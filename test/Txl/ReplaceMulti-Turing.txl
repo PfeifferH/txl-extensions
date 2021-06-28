@@ -1,4 +1,4 @@
-% ReplaceMulti.txl: Replace multiple statements with single statement
+% ReplaceMulti-Turing.txl: Replace multiple statements with single statement
 % Hayden Pfeiffer
 % Queen's University, June 2021
 

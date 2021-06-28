@@ -1,4 +1,4 @@
-% DeleteSingle.txl: Delete a single Turing statement
+% ReplaceSingle-Turing.txl: Replace a variable declaration with its inverse
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,14 +8,16 @@ function main
     replace [program]
         P [program]
     by
-        P [DeleteSingle]
+        P [ReplaceSingle]
 end function
 
-rule DeleteSingle
+rule ReplaceSingle
     replace [repeat declaration_or_statement]
         ...
-        'var x [id] ':= e1 [expn]
+        'var x [id] ':= e1 [primary] '+ e2 [expn]
         ...
     by
+        ...
+        'var x ':= 2
         ...
 end rule

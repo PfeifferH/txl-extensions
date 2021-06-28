@@ -1,4 +1,4 @@
-% AddMulti.txl: Add multiple statements onto a single statement
+% MoveToEndMulti-Turing.txl: Move statements to the end of a sequence
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,13 +8,16 @@ function main
     replace [program]
         P [program]
     by
-        P [AddMulti]
+        P [MoveToEndMulti]
 end function
 
-function AddMulti
-    replace * [repeat declaration_or_statement]
+rule MoveToEndMulti
+    replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
+        'if x '< 0 'then 
+            x ':= 0 
+        'end 'if
         ...
     by
         ...
@@ -22,8 +25,4 @@ function AddMulti
         'if x '< 0 'then 
             x ':= 0 
         'end 'if
-        'if x '> 10 'then
-            x ':= x '* 2
-        'end 'if
-        ...
-end function
+end rule

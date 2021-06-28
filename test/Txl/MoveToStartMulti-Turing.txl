@@ -1,4 +1,4 @@
-% MoveToStartMulti.txl: Move a multiples statements to the start of a sequence 
+% MoveToStartMulti-Turing.txl: Move a multiples statements to the start of a sequence 
 % Hayden Pfeiffer
 % Queen's University, June 2021
 

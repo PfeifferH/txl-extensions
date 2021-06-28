@@ -1,4 +1,4 @@
-% MoveToEndSingle.txl: Move a statement to the end of a sequence
+% DeleteSingle-Turing.txl: Delete a single Turing statement
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,15 +8,14 @@ function main
     replace [program]
         P [program]
     by
-        P [MoveToEndSingle]
+        P [DeleteSingle]
 end function
 
-rule MoveToEndSingle
+rule DeleteSingle
     replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
         ...
     by
         ...
-        'var x ':= e1
 end rule

@@ -1,4 +1,4 @@
-% MoveToStartSingle.txl: Move a single statement from a list 
+% DeleteMulti-Turing.txl: Delete multiple Turing statements
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,15 +8,20 @@ function main
     replace [program]
         P [program]
     by
-        P [MoveToStartSingle]
+        P [DeleteMulti]
 end function
 
-rule MoveToStartSingle
+rule DeleteMulti
     replace [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
+        'if x '< 0 'then 
+            x ':= 0 
+        'end 'if
+        'if x '> e2 [expn] 'then 
+            x ':= e2 
+        'end 'if
         ...
     by
-        'var x ':= e1
         ...
 end rule

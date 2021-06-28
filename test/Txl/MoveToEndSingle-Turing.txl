@@ -1,4 +1,4 @@
-% ReplaceSingle.txl: Replace a variable declaration with its inverse
+% MoveToEndSingle-Turing.txl: Move a statement to the end of a sequence
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,16 +8,15 @@ function main
     replace [program]
         P [program]
     by
-        P [ReplaceSingle]
+        P [MoveToEndSingle]
 end function
 
-rule ReplaceSingle
+rule MoveToEndSingle
     replace [repeat declaration_or_statement]
         ...
-        'var x [id] ':= e1 [primary] '+ e2 [expn]
+        'var x [id] ':= e1 [expn]
         ...
     by
         ...
-        'var x ':= 2
-        ...
+        'var x ':= e1
 end rule
