@@ -12,7 +12,7 @@ function main
 end function
 
 function AddMulti
-    replace [repeat declaration_or_statement]
+    replace * [repeat declaration_or_statement]
         ...
         'var x [id] ':= e1 [expn]
         ...

@@ -16,7 +16,7 @@ end function
 rule resolveEmbedRule
     replace [ruleStatement]
         'rule RuleName [ruleid]
-            'replace '[ 'repeat RuleType [typeid]']
+            'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
                 RulePattern [pattern]
             'by
                 RuleReplacement [replacement]    
@@ -36,7 +36,7 @@ rule resolveEmbedRule
         'Tail
     by
         'rule RuleName 
-            'replace '[ 'repeat RuleType']
+            'replace optStar '[ 'repeat RuleType']
                 RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
             optDeconstruct
             'by
@@ -47,7 +47,7 @@ end rule
 rule resolveEmbedFunction
     replace [functionStatement]
         'function RuleName [ruleid]
-            'replace '[ 'repeat RuleType [typeid]']
+            'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
                 RulePattern [pattern]
             'by
                 RuleReplacement [replacement]    
@@ -67,7 +67,7 @@ rule resolveEmbedFunction
         'Tail
     by
         'function RuleName 
-            'replace '[ 'repeat RuleType']
+            'replace optStar '[ 'repeat RuleType']
                 RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
             optDeconstruct
             'by
