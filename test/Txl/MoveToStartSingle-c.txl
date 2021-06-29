@@ -1,8 +1,8 @@
-% MoveToStartSingle-Turing.txl: Move a single statement from a list 
+% MoveToStartSingle-c.txl: Move a single statement from a list to the start
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,11 +12,11 @@ function main
 end function
 
 rule MoveToStartSingle
-    replace [repeat declaration_or_statement]
+    replace [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
+        'int x [id] '= e1 [assignment_expression]';
         ...
     by
-        'var x ':= e1
+        'int x '= e1';
         ...
 end rule
