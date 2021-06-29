@@ -1,8 +1,8 @@
-% MoveToEndMulti-Turing.txl: Move statements to the end of a sequence
+% MoveToEndMulti-c.txl: Move statements to the end of a sequence
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,17 +12,17 @@ function main
 end function
 
 rule MoveToEndMulti
-    replace [repeat declaration_or_statement]
+    replace [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
-        'if x '< 0 'then 
-            x ':= 0 
-        'end 'if
+        'int x [id] '= e1 [assignment_expression]';
+        'if '( x '< 0') '{ 
+            x '= 0'; 
+        '}
         ...
     by
         ...
-        'var x ':= e1
-        'if x '< 0 'then 
-            x ':= 0 
-        'end 'if
+        'int x '= e1';
+        'if '( x '< 0') '{ 
+            x '= 0'; 
+        '}
 end rule

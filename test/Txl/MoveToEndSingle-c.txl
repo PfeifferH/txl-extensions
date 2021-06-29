@@ -1,8 +1,8 @@
-% MoveToEndSingle-Turing.txl: Move a statement to the end of a sequence
+% MoveToEndSingle-c.txl: Move a statement to the end of a sequence
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,11 +12,11 @@ function main
 end function
 
 rule MoveToEndSingle
-    replace [repeat declaration_or_statement]
+    replace [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
+        'int x [id] '= e1 [assignment_expression]';
         ...
     by
         ...
-        'var x ':= e1
+        'int x '= e1';
 end rule
