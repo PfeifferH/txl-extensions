@@ -1,4 +1,4 @@
-% AddMulti-Turing.txl: Add multiple statements onto a single statement
+% AddMulti-c.txl: Add multiple statements onto a single statement
 % Hayden Pfeiffer
 % Queen's University, June 2021
 

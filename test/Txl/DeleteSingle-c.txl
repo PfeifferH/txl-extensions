@@ -1,8 +1,8 @@
-% DeleteSingle-Turing.txl: Delete a single Turing statement
+% DeleteSingle-c.txl: Delete a single Turing statement
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,9 +12,9 @@ function main
 end function
 
 rule DeleteSingle
-    replace [repeat declaration_or_statement]
+    replace [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
+        'int x [id] '= e1 [assignment_expression]';
         ...
     by
         ...

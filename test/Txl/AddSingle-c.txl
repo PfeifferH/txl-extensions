@@ -1,4 +1,4 @@
-% AddSingle-Turing.txl: Add a single statement to another
+% AddSingle-c.txl: Add a single statement to another
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
