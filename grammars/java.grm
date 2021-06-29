@@ -154,7 +154,7 @@
 
 tokens
     space  	"[ \t]+"
-    newline  	"\n" | "" | "\n"
+    newline  	"\n" 
 
     % JRC 27 Nov 2020 - added UTF-8 identifier characters
     id  	"[$\u][$\i]*"
