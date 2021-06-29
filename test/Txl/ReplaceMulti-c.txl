@@ -1,8 +1,8 @@
-% ReplaceMulti-Turing.txl: Replace multiple statements with single statement
+% ReplaceMulti-c.txl: Replace multiple statements with single statement in c
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,21 +12,21 @@ function main
 end function
 
 rule ReplaceMulti
-    replace [repeat declaration_or_statement]
+    replace [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
-        'if x '< 0 'then 
-            x ':= 0 
-        'end 'if
-        'if x '> e2 [expn] 'then 
-            x ':= e2 
-        'end 'if
+        'int x [id] '= e1 [assignment_expression]';
+        'if '( x '< 0') '{ 
+            x '= 0'; 
+        '}
+        'if '( x '> e2 [additive_expression] ') '{ 
+            x '= e2'; 
+        '}
         ...
     by
         ...
-        'var x ':= 'min(0 ', 'max( e1 ', e2 '))
-        'if x '< 0 'then 
-            x ':= 0 
-        'end 'if
+        'int x '= 'min(0 ', 'max( e1 ', e2 '));
+        'if '( x '< 0') '{ 
+            x '= 0'; 
+        '}
         ...
 end rule

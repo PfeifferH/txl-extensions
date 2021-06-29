@@ -1,8 +1,8 @@
-% ReplaceSingle-Turing.txl: Replace a variable declaration with its inverse
+% ReplaceSingle-c.txl: Replace a variable initialization with an arbitrary expression
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,12 +12,12 @@ function main
 end function
 
 rule ReplaceSingle
-    replace [repeat declaration_or_statement]
+    replace [repeat block_item]
         ...
-        'var x [id] ':= e1 [primary] '+ e2 [expn]
+        'int x [id] '= e1 [multiplicative_expression] '+ e2 [multiplicative_expression]';
         ...
     by
         ...
-        'var x ':= 2
+        'int x '= e1 '* 2';
         ...
 end rule
