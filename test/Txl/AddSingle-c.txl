@@ -2,7 +2,7 @@
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,15 +12,15 @@ function main
 end function
 
 function AddSingle
-    replace * [repeat declaration_or_statement]
+    replace * [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
+        'int x [id] '= e1 [assignment_expression]';
         ...
     by
         ...
-        'var x ':= e1
-        'if x '< 0 'then 
-            x ':= 0 
-        'end 'if
+        'int x '= e1';
+        'if '( x '< 0') '{ 
+            x '= 0'; 
+        '}
         ...
 end function
