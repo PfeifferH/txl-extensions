@@ -7,12 +7,11 @@ include "../grammars/extensions.grm"
 function main
     replace [program]
         P [program]
-    construct newP [program]
-        P [resolveEmbedRule] [resolveEmbedFunction]
     by
-        newP 
+        P [resolveEmbedRule] [resolveEmbedFunction]
 end function
 
+% Matches rules in input 
 rule resolveEmbedRule
     replace [ruleStatement]
         'rule RuleName [ruleid]
@@ -30,7 +29,7 @@ rule resolveEmbedRule
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
     construct optDeconstruct [repeat constructDeconstructImportExportOrCondition]
-        _ [deconstructPattern Pattern RuleReplacement RuleType] [noDeconstruct]
+        _ [constructStmts Pattern RuleReplacement RuleType] [noDeconstruct]
 
     construct Tail [repeat literalOrExpression]
         'Tail
@@ -40,10 +39,11 @@ rule resolveEmbedRule
                 RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
             optDeconstruct
             'by
-                RuleReplacement [constructReplacement] [constructReplacementWithHead] [constructReplacementMoveToEnd]
+                RuleReplacement [constructReplacement] [constructReplacementWithHead] 
         'end 'rule  
 end rule
 
+% Matches functions in input
 rule resolveEmbedFunction
     replace [functionStatement]
         'function RuleName [ruleid]
@@ -60,8 +60,8 @@ rule resolveEmbedFunction
         _ [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
-    construct optDeconstruct [repeat constructDeconstructImportExportOrCondition]
-        _ [deconstructPattern Pattern RuleReplacement RuleType] [noDeconstruct]
+    construct optConstruct [repeat constructDeconstructImportExportOrCondition]
+        _ [constructStmts Pattern RuleReplacement RuleType] [noDeconstruct]
 
     construct Tail [repeat literalOrExpression]
         'Tail
@@ -69,12 +69,13 @@ rule resolveEmbedFunction
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']
                 RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
-            optDeconstruct
+            optConstruct
             'by
-                RuleReplacement [constructReplacement] [constructReplacementWithHead] [constructReplacementMoveToEnd]
+                RuleReplacement [constructReplacement] [constructReplacementWithHead] 
         'end 'function  
 end rule
 
+% Default Pattern construction
 rule constructPattern RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
         '...
@@ -90,6 +91,7 @@ rule constructPattern RuleReplacement [replacement] RuleType [typeid]
         Pattern [. Tail]
 end rule
 
+% For cases where we move a block to the start, we need to construct the pattern with a head of the input type. This is a singular, non-repeated item, so the block is bubble sorted to the top
 rule constructPatternWithHead RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
         _ [repeat literalOrExpression]
@@ -106,22 +108,7 @@ rule constructPatternWithHead RuleReplacement [replacement] RuleType [typeid]
         Head [. Pattern] [. Tail]
 end rule
 
-rule constructPatternWithStmts RuleReplacement [replacement] RuleType [typeid]
-    deconstruct RuleReplacement
-        '...
-        _ [repeat literalOrExpression+]
-    construct Tail [literalOrVariable]
-        'Tail '[ 'repeat RuleType '+']
-    construct Stmts [repeat literalOrVariable]
-        'Stmts '[ RuleType ']
-    replace [pattern]
-        '...
-        Pattern [repeat literalOrVariable]
-        '...
-    by
-        Stmts [. Tail]
-end rule
-
+% Default replacement construction
 rule constructReplacement
     construct Tail [repeat literalOrExpression]
         'Tail
@@ -133,6 +120,7 @@ rule constructReplacement
         Replacement [. Tail]
 end rule
 
+% Replacement construction with head for move to start case
 rule constructReplacementWithHead
     construct Head [repeat literalOrExpression]
         'Head
@@ -145,17 +133,8 @@ rule constructReplacementWithHead
         Replacement [. Head] [. Tail]
 end rule
 
-rule constructReplacementMoveToEnd
-    construct Tail [repeat literalOrExpression]
-        'Tail '['. 'Pattern ']
-    replace [replacement]
-        '...
-        Replacement [repeat literalOrExpression]
-    by
-        Tail
-end rule
-
-function deconstructPattern Pattern [repeat literalOrVariable] RuleReplacement [replacement] RuleType [typeid]
+% Deconstruct and construct statements for the new rule/function. Deconstruct not tail to verify that we have a tail, and construct a new pattern from the replacement
+function constructStmts Pattern [repeat literalOrVariable] RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
         '...
         Replacement [repeat literalOrExpression]
@@ -166,6 +145,7 @@ function deconstructPattern Pattern [repeat literalOrVariable] RuleReplacement [
             Replacement
 end function
 
+% For cases when we don't need do make new construct/deconstruct statements
 function noDeconstruct
     replace [repeat constructDeconstructImportExportOrCondition]
     by 
