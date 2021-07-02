@@ -39,7 +39,7 @@ rule resolveEmbedRule
                 RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
             optDeconstruct
             'by
-                RuleReplacement [constructReplacement] [constructReplacementWithHead] 
+                RuleReplacement [constructReplacement] [constructReplacementWithHead] [constructReplacementMoveToEnd]
         'end 'rule  
 end rule
 
@@ -131,6 +131,16 @@ rule constructReplacementWithHead
         '...
     by
         Replacement [. Head] [. Tail]
+end rule
+
+rule constructReplacementMoveToEnd
+    construct Tail [repeat literalOrExpression]
+        'Tail '['. 'Pattern ']
+    replace [replacement]
+        '...
+        Replacement [repeat literalOrExpression]
+    by
+        Tail
 end rule
 
 % Deconstruct and construct statements for the new rule/function. Deconstruct not tail to verify that we have a tail, and construct a new pattern from the replacement
