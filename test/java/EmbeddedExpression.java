@@ -1,4 +1,4 @@
-class main
+class EmbeddedExpression
 {
     public static void main(String args[])
     {
