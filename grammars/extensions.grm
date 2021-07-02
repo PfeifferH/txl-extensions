@@ -1,0 +1,31 @@
+% TXL grammar for TXL 10.5
+% J.R. Cordy, Queen's University
+% March 2009
+
+include "../grammars/txl.grm"
+
+keys
+	'...
+end keys 
+
+define dotDotDot
+	'... 
+end define
+
+define optDotDotDot
+	[opt dotDotDot]
+end define
+
+redefine pattern
+	[dotDotDot]							[NL]
+	[repeat literalOrVariable+] 		[NL]
+	[dotDotDot]							[NL]
+	|  [repeat literalOrVariable]		[NL]
+end define
+
+redefine replacement 
+	[opt dotDotDot]							[NL]
+	[repeat literalOrExpression] 		[NL]
+	[opt dotDotDot]						[NL]
+	|  [repeat literalOrExpression]		[NL]
+end define 
