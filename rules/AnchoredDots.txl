@@ -8,11 +8,11 @@ function main
     replace [program]
         P [program]
     by
-        P [resolveEmbedRule] [resolveEmbedFunction]
+        P [resolveAnchoredRule] [resolveAnchoredFunction]
 end function
 
 % Matches rules in input 
-rule resolveEmbedRule
+rule resolveAnchoredRule
     replace [ruleStatement]
         'rule RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
@@ -44,7 +44,7 @@ rule resolveEmbedRule
 end rule
 
 % Matches functions in input
-rule resolveEmbedFunction
+rule resolveAnchoredFunction
     replace [functionStatement]
         'function RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
