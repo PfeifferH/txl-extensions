@@ -13,7 +13,7 @@ end function
 
 % Matches rules in input 
 rule resolveAnchoredRule
-    replace [ruleStatement]
+    replace [repeat statement]
         'rule RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
                 RulePattern [pattern]
@@ -33,19 +33,38 @@ rule resolveAnchoredRule
 
     construct Tail [repeat literalOrExpression]
         'Tail
+    construct Order [repeat literalOrExpression]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [MoveToEnd RuleReplacement]
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
-                RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
-            optDeconstruct
+                'Scope '[ 'repeat RuleType ']
+            'skipping '[ RuleType']
+            'deconstruct '* 'Scope 
+                RulePattern [constructPattern RuleReplacement RuleType]
+            'deconstruct 'not 'Tail
+            'construct 'Pattern '[ 'repeat RuleType']
+                RuleReplacement [constructReplacementNoTail] 
+            'construct 'PatternAndTail '[ 'repeat RuleType']
+                'Pattern '[ '. 'Tail ']
+            'construct 'Head '[ 'repeat RuleType']
+                'Scope '[ 'deleteTail 'PatternAndTail ']
+            'deconstruct 'not 'Head
             'by
-                RuleReplacement [constructReplacement] [constructReplacementWithHead] [constructReplacementMoveToEnd]
-        'end 'rule  
+                Order
+        'end 'rule
+
+        'function 'deleteTail 'Tail '[ 'repeat RuleType']
+            'skipping '[ RuleType']
+            'replace '* '[ 'repeat RuleType ']
+                'Tail
+            'by
+        'end 'function  
 end rule
 
 % Matches functions in input
 rule resolveAnchoredFunction
-    replace [functionStatement]
+    replace [repeat statement]
         'function RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
                 RulePattern [pattern]
@@ -65,22 +84,37 @@ rule resolveAnchoredFunction
 
     construct Tail [repeat literalOrExpression]
         'Tail
+    construct Order [repeat literalOrExpression]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [MoveToEnd RuleReplacement]
     by
-        'function RuleName 
+        'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
-                RulePattern [constructPattern RuleReplacement RuleType] [constructPatternWithHead RuleReplacement RuleType] 
-            optConstruct
+                'Scope '[ 'repeat RuleType ']
+            'skipping '[ RuleType']
+            'deconstruct '* 'Scope 
+                RulePattern [constructPattern RuleReplacement RuleType]
+            'deconstruct 'not 'Tail
+            'construct 'Pattern '[ 'repeat RuleType']
+                RuleReplacement [constructReplacementNoTail] 
+            'construct 'PatternAndTail '[ 'repeat RuleType']
+                'Pattern '[ '. 'Tail ']
+            'construct 'Head '[ 'repeat RuleType']
+                'Scope '[ 'deleteTail 'PatternAndTail ']
+            'deconstruct 'not 'Head
             'by
-                RuleReplacement [constructReplacement] [constructReplacementWithHead] 
-        'end 'function  
+                Order
+        'end 'rule
+
+        'function 'deleteTail 'Tail '[ 'repeat RuleType']
+            'skipping '[ RuleType']
+            'replace '* '[ 'repeat RuleType ']
+                'Tail
+            'by
+        'end 'function
 end rule
 
 % Default Pattern construction
 rule constructPattern RuleReplacement [replacement] RuleType [typeid]
-    deconstruct RuleReplacement
-        '...
-        _ [repeat literalOrExpression]
-        _ [opt dotDotDot]
     construct Tail [literalOrVariable]
         'Tail '[ 'repeat RuleType ']
     replace [pattern]
@@ -143,6 +177,15 @@ rule constructReplacementMoveToEnd
         Tail
 end rule
 
+function constructReplacementNoTail
+    replace [replacement]
+        _ [opt dotDotDot]
+        Replacement [repeat literalOrExpression]
+        _ [opt dotDotDot]
+    by
+        Replacement
+end function
+
 % Deconstruct and construct statements for the new rule/function. Deconstruct not tail to verify that we have a tail, and construct a new pattern from the replacement
 function constructStmts Pattern [repeat literalOrVariable] RuleReplacement [replacement] RuleType [typeid]
     deconstruct RuleReplacement
@@ -159,4 +202,32 @@ end function
 function noDeconstruct
     replace [repeat constructDeconstructImportExportOrCondition]
     by 
+end function
+
+function MoveToStart RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        _ [repeat literalOrExpression]
+        '...
+    replace [repeat literalOrExpression]
+    by
+        'Pattern '[ '. 'Head '] '[ '. 'Tail ']
+end function
+
+function NoMove RuleReplacement [replacement]
+    deconstruct RuleReplacement 
+        '...
+        _ [repeat literalOrExpression]
+        '...
+    replace [repeat literalOrExpression]
+    by
+        'Head '[ '. 'Pattern '] '[ '. 'Tail ']
+end function
+
+function MoveToEnd RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        '...
+        _ [repeat literalOrExpression]
+    replace [repeat literalOrExpression]
+    by
+        'Head '[ '. 'Tail '] '[ '. 'Pattern ']
 end function
