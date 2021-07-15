@@ -4,6 +4,7 @@
 
 include "../grammars/extensions.grm"
 
+% Run the resolveAnchoredRule and resolveAnchoredFunction rules on input
 function main
     replace [program]
         P [program]
@@ -29,13 +30,13 @@ rule resolveAnchoredRule
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
     construct PatternWithoutTypes [pattern]
-        RulePattern [constructPattern]
+        RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
         '...
         InnerPattern [repeat literalOrVariable]
         '...
     construct newPattern [replacement]
-        _ [constructNewPattern each InnerPattern]
+        _ [constructPattern each InnerPattern]
     construct PatternOrder [repeat literalOrExpression]
         _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
     by
@@ -49,7 +50,7 @@ rule resolveAnchoredRule
             'construct 'Pattern '[ 'repeat RuleType']
                 newPattern
             'construct 'Replacement '[ 'repeat RuleType ']
-                RuleReplacement [constructReplacementNoTail]
+                RuleReplacement [constructReplacement]
             'construct 'PatternAndTail '[ 'repeat RuleType']
                 'Pattern '[ '. 'Tail ']
             'construct 'Head '[ 'repeat RuleType']
@@ -85,13 +86,13 @@ rule resolveAnchoredFunction
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
     construct PatternWithoutTypes [pattern]
-        RulePattern [constructPattern]
+        RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
         '...
         InnerPattern [repeat literalOrVariable]
         '...
     construct newPattern [replacement]
-        _ [constructNewPattern each InnerPattern]
+        _ [constructPattern each InnerPattern]
     construct PatternOrder [repeat literalOrExpression]
         _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
     by
@@ -105,7 +106,7 @@ rule resolveAnchoredFunction
             'construct 'Pattern '[ 'repeat RuleType']
                 newPattern
             'construct 'Replacement '[ 'repeat RuleType ']
-                RuleReplacement [constructReplacementNoTail]
+                RuleReplacement [constructReplacement]
             'construct 'PatternAndTail '[ 'repeat RuleType']
                 'Pattern '[ '. 'Tail ']
             'construct 'Head '[ 'repeat RuleType']
@@ -123,7 +124,7 @@ rule resolveAnchoredFunction
         'end 'function
 end rule
 
-% Default Pattern construction
+% Remove dotDotDots from pattern and add tail
 rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
     construct Tail [literalOrVariable]
         'Tail '[ 'repeat RuleType ']
@@ -135,14 +136,16 @@ rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
         Pattern [. Tail]
 end rule
 
-rule constructPattern 
+% Remove all instances of a type (ex: 'var x [id] -> var x)
+rule removeTypes
     replace [literalOrVariable]
         Var [varid] _ [type] 
     by
         Var
 end rule
 
-function constructNewPattern InnerLit [literalOrVariable]
+% Extract literal or variable from input. Since the literalOrVariable can only be one of these, the output literalOrExpression is of size 1 
+function constructPattern InnerLit [literalOrVariable]
     construct newLit [repeat literalOrExpression]
         _ [constructNewLit InnerLit]
     construct newVar [repeat literalOrExpression]
@@ -152,6 +155,7 @@ function constructNewPattern InnerLit [literalOrVariable]
         newLit [. newVar]
 end function
 
+% Case when input is a literal
 function constructNewLit InnerLit [literalOrVariable]
     deconstruct InnerLit
         singleLit [literal]
@@ -160,6 +164,7 @@ function constructNewLit InnerLit [literalOrVariable]
         singleLit
 end function
 
+% Case when in is a variable
 function constructNewVar InnerLit [literalOrVariable]
     deconstruct InnerLit
         singleVar [varid]
@@ -168,7 +173,8 @@ function constructNewVar InnerLit [literalOrVariable]
         singleVar
 end function
 
-function constructReplacementNoTail
+% Extract replacement from dotDotDots
+function constructReplacement
     replace [replacement]
         _ [opt dotDotDot]
         Replacement [repeat literalOrExpression]
@@ -177,6 +183,7 @@ function constructReplacementNoTail
         Replacement
 end function
 
+% Case when rule moves pattern to the start of a repeat with dotDotDots
 function MoveToStart RuleReplacement [replacement]
     deconstruct RuleReplacement
         _ [repeat literalOrExpression]
@@ -186,6 +193,7 @@ function MoveToStart RuleReplacement [replacement]
         'Replacement '[ '. 'Head '] '[ '. 'Tail ']
 end function
 
+% Case when pattern embedded in dotDotDots deleted
 function NoMove RuleReplacement [replacement]
     deconstruct RuleReplacement 
         '...
@@ -194,6 +202,7 @@ function NoMove RuleReplacement [replacement]
         'Head '[ '. 'Tail ']
 end function
 
+% Case when pattern embedded in dotDotDots is not moved
 function NoMoveEmbedded RuleReplacement [replacement]
     deconstruct RuleReplacement 
         '...
@@ -204,6 +213,7 @@ function NoMoveEmbedded RuleReplacement [replacement]
         'Head '[ '. 'Replacement '] '[ '. 'Tail ']
 end function
 
+% Case when rule moves pattern to the end of a repeat with dotDotDots
 function MoveToEnd RuleReplacement [replacement]
     deconstruct RuleReplacement
         '...
