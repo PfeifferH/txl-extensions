@@ -59,12 +59,12 @@ rule resolveAnchoredRule
                 PatternOrder
         'end 'rule
 
-        'rule 'deleteTail 'Tail '[ 'repeat RuleType']
+        'function 'deleteTail 'Tail '[ 'repeat RuleType']
             'skipping '[ RuleType']
             'replace '* '[ 'repeat RuleType ']
                 'Tail
             'by
-        'end 'rule  
+        'end 'function  
 end rule
 
 % Matches functions in input
@@ -115,12 +115,12 @@ rule resolveAnchoredFunction
                 PatternOrder
         'end 'function
 
-        'rule 'deleteTail 'Tail '[ 'repeat RuleType']
+        'function 'deleteTail 'Tail '[ 'repeat RuleType']
             'skipping '[ RuleType']
             'replace '* '[ 'repeat RuleType ']
                 'Tail
             'by
-        'end 'rule
+        'end 'function
 end rule
 
 % Default Pattern construction
