@@ -28,20 +28,28 @@ rule resolveAnchoredRule
         _ [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
-    construct Tail [repeat literalOrExpression]
-        'Tail
+    construct PatternWithoutTypes [pattern]
+        RulePattern [constructPattern]
+    deconstruct PatternWithoutTypes
+        '...
+        InnerPattern [repeat literalOrVariable]
+        '...
+    construct newPattern [replacement]
+        _ [constructNewPattern each InnerPattern]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [MoveToEnd RuleReplacement]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
                 'Scope '[ 'repeat RuleType ']
             'skipping '[ RuleType']
             'deconstruct '* 'Scope 
-                RulePattern [constructPattern RuleReplacement RuleType]
+                RulePattern [deconstructScope RuleReplacement RuleType]
             'deconstruct 'not 'Tail
             'construct 'Pattern '[ 'repeat RuleType']
-                RuleReplacement [constructReplacementNoTail] 
+                newPattern
+            'construct 'Replacement '[ 'repeat RuleType ']
+                RuleReplacement [constructReplacementNoTail]
             'construct 'PatternAndTail '[ 'repeat RuleType']
                 'Pattern '[ '. 'Tail ']
             'construct 'Head '[ 'repeat RuleType']
@@ -51,12 +59,12 @@ rule resolveAnchoredRule
                 PatternOrder
         'end 'rule
 
-        'function 'deleteTail 'Tail '[ 'repeat RuleType']
+        'rule 'deleteTail 'Tail '[ 'repeat RuleType']
             'skipping '[ RuleType']
             'replace '* '[ 'repeat RuleType ']
                 'Tail
             'by
-        'end 'function  
+        'end 'rule  
 end rule
 
 % Matches functions in input
@@ -76,20 +84,28 @@ rule resolveAnchoredFunction
         _ [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
-    construct Tail [repeat literalOrExpression]
-        'Tail
+    construct PatternWithoutTypes [pattern]
+        RulePattern [constructPattern]
+    deconstruct PatternWithoutTypes
+        '...
+        InnerPattern [repeat literalOrVariable]
+        '...
+    construct newPattern [replacement]
+        _ [constructNewPattern each InnerPattern]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [MoveToEnd RuleReplacement]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
     by
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']
                 'Scope '[ 'repeat RuleType ']
             'skipping '[ RuleType']
             'deconstruct '* 'Scope 
-                RulePattern [constructPattern RuleReplacement RuleType]
+                RulePattern [deconstructScope RuleReplacement RuleType]
             'deconstruct 'not 'Tail
             'construct 'Pattern '[ 'repeat RuleType']
-                RuleReplacement [constructReplacementNoTail] 
+                newPattern
+            'construct 'Replacement '[ 'repeat RuleType ']
+                RuleReplacement [constructReplacementNoTail]
             'construct 'PatternAndTail '[ 'repeat RuleType']
                 'Pattern '[ '. 'Tail ']
             'construct 'Head '[ 'repeat RuleType']
@@ -99,16 +115,16 @@ rule resolveAnchoredFunction
                 PatternOrder
         'end 'function
 
-        'function 'deleteTail 'Tail '[ 'repeat RuleType']
+        'rule 'deleteTail 'Tail '[ 'repeat RuleType']
             'skipping '[ RuleType']
             'replace '* '[ 'repeat RuleType ']
                 'Tail
             'by
-        'end 'function
+        'end 'rule
 end rule
 
 % Default Pattern construction
-rule constructPattern RuleReplacement [replacement] RuleType [typeid]
+rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
     construct Tail [literalOrVariable]
         'Tail '[ 'repeat RuleType ']
     replace [pattern]
@@ -118,6 +134,39 @@ rule constructPattern RuleReplacement [replacement] RuleType [typeid]
     by
         Pattern [. Tail]
 end rule
+
+rule constructPattern 
+    replace [literalOrVariable]
+        Var [varid] _ [type] 
+    by
+        Var
+end rule
+
+function constructNewPattern InnerLit [literalOrVariable]
+    construct newLit [repeat literalOrExpression]
+        _ [constructNewLit InnerLit]
+    construct newVar [repeat literalOrExpression]
+        _ [constructNewVar InnerLit]
+    replace * [repeat literalOrExpression]
+    by
+        newLit [. newVar]
+end function
+
+function constructNewLit InnerLit [literalOrVariable]
+    deconstruct InnerLit
+        singleLit [literal]
+    replace * [repeat literalOrExpression]
+    by
+        singleLit
+end function
+
+function constructNewVar InnerLit [literalOrVariable]
+    deconstruct InnerLit
+        singleVar [varid]
+    replace * [repeat literalOrExpression]
+    by
+        singleVar
+end function
 
 function constructReplacementNoTail
     replace [replacement]
@@ -134,17 +183,25 @@ function MoveToStart RuleReplacement [replacement]
         '...
     replace [repeat literalOrExpression]
     by
-        'Pattern '[ '. 'Head '] '[ '. 'Tail ']
+        'Replacement '[ '. 'Head '] '[ '. 'Tail ']
 end function
 
 function NoMove RuleReplacement [replacement]
     deconstruct RuleReplacement 
         '...
-        _ [repeat literalOrExpression]
-        _ [opt dotDotDot]
     replace [repeat literalOrExpression]
     by
-        'Head '[ '. 'Pattern '] '[ '. 'Tail ']
+        'Head '[ '. 'Tail ']
+end function
+
+function NoMoveEmbedded RuleReplacement [replacement]
+    deconstruct RuleReplacement 
+        '...
+        _ [repeat literalOrExpression]
+        '...
+    replace [repeat literalOrExpression]
+    by
+        'Head '[ '. 'Replacement '] '[ '. 'Tail ']
 end function
 
 function MoveToEnd RuleReplacement [replacement]
@@ -153,5 +210,5 @@ function MoveToEnd RuleReplacement [replacement]
         _ [repeat literalOrExpression]
     replace [repeat literalOrExpression]
     by
-        'Head '[ '. 'Tail '] '[ '. 'Pattern ']
+        'Head '[ '. 'Tail '] '[ '. 'Replacement ']
 end function
