@@ -29,6 +29,7 @@ rule resolveAnchoredRule
         _ [opt dotDotDot]
         Replacement [repeat literalOrExpression]
         _ [opt dotDotDot]
+    
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -37,16 +38,11 @@ rule resolveAnchoredRule
         '...
     construct newPattern [replacement]
         _ [constructPattern each InnerPattern]
-    construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
-    by
-        'rule RuleName 
-            'replace optStar '[ 'repeat RuleType']
-                'Scope '[ 'repeat RuleType ']
-            'skipping '[ RuleType']
+    construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
+        'skipping '[ RuleType']
             'deconstruct '* 'Scope 
                 RulePattern [deconstructScope RuleReplacement RuleType]
-            'deconstruct 'not 'Tail
+            
             'construct 'Pattern '[ 'repeat RuleType']
                 newPattern
             'construct 'Replacement '[ 'repeat RuleType ']
@@ -55,7 +51,15 @@ rule resolveAnchoredRule
                 'Pattern '[ '. 'Tail ']
             'construct 'Head '[ 'repeat RuleType']
                 'Scope '[ 'deleteTail 'PatternAndTail ']
-            'deconstruct 'not 'Head
+    construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
+        _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
+    construct PatternOrder [repeat literalOrExpression]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
+    by
+        'rule RuleName 
+            'replace optStar '[ 'repeat RuleType']
+                'Scope '[ 'repeat RuleType ']
+            ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
                 PatternOrder
         'end 'rule
@@ -93,16 +97,11 @@ rule resolveAnchoredFunction
         '...
     construct newPattern [replacement]
         _ [constructPattern each InnerPattern]
-    construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
-    by
-        'function RuleName 
-            'replace optStar '[ 'repeat RuleType']
-                'Scope '[ 'repeat RuleType ']
-            'skipping '[ RuleType']
+    construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
+        'skipping '[ RuleType']
             'deconstruct '* 'Scope 
                 RulePattern [deconstructScope RuleReplacement RuleType]
-            'deconstruct 'not 'Tail
+            
             'construct 'Pattern '[ 'repeat RuleType']
                 newPattern
             'construct 'Replacement '[ 'repeat RuleType ']
@@ -111,7 +110,15 @@ rule resolveAnchoredFunction
                 'Pattern '[ '. 'Tail ']
             'construct 'Head '[ 'repeat RuleType']
                 'Scope '[ 'deleteTail 'PatternAndTail ']
-            'deconstruct 'not 'Head
+    construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
+        _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
+    construct PatternOrder [repeat literalOrExpression]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
+    by
+        'function RuleName 
+            'replace optStar '[ 'repeat RuleType']
+                'Scope '[ 'repeat RuleType ']
+            ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
                 PatternOrder
         'end 'function
@@ -121,7 +128,7 @@ rule resolveAnchoredFunction
             'replace '* '[ 'repeat RuleType ']
                 'Tail
             'by
-        'end 'function
+        'end 'function  
 end rule
 
 % Remove dotDotDots from pattern and add tail
@@ -221,4 +228,30 @@ function MoveToEnd RuleReplacement [replacement]
     replace [repeat literalOrExpression]
     by
         'Head '[ '. 'Tail '] '[ '. 'Replacement ']
+end function
+
+% Add a deconstruct not Tail statement when moving replacement to the end of the block
+function deconstructTail RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        '...
+        _ [repeat literalOrExpression+]
+    replace [repeat constructDeconstructImportExportOrCondition]
+    by
+        'deconstruct 'not 'Tail
+end function
+
+% Add a deconstruct not Tail statement when moving replacement to the start of the block
+function deconstructHead RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        _ [repeat literalOrExpression+]
+        '... 
+    replace [repeat constructDeconstructImportExportOrCondition]
+    by
+        'deconstruct 'not 'Head
+end function
+
+% No "deconstruct not" statements necessary if not moving the replacement to a different position in block
+function noDeconstruct
+    replace [repeat constructDeconstructImportExportOrCondition]
+    by
 end function
