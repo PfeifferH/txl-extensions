@@ -33,9 +33,7 @@ redefine replacement
 	[repeat literalOrExpression] 		[NL]
 	[opt dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]
-	   [opt dotDotDot]					[NL]
-	   [repeat literalOrExpression] 	[NL]
-	   [opt dotDotDot]					[NL]
+	   [replacement]					[NL]
 	   [repeat literalOrExpression]		[NL]
 	|  [repeat literalOrExpression]		[NL]
 end define 

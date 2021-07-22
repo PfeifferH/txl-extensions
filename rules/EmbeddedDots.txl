@@ -29,11 +29,14 @@ rule resolveAnchoredRule
         PostPattern [repeat literalOrVariable]
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
-        _ [dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [dotDotDot]
+        InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
-
+    deconstruct InnerReplacement
+        _ [opt dotDotDot]
+        Replacement [repeat literalOrExpression]
+        _ [opt dotDotDot]
+    construct PatternScope [repeat literalOrVariable]
+        'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -44,10 +47,6 @@ rule resolveAnchoredRule
         _ [repeat literalOrVariable]
     construct newPattern [replacement]
         _ [constructPattern each InnerPattern]
-    construct InnerReplacement [replacement]
-        '...
-        Replacement
-        '...
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
             'deconstruct '* 'Scope 
@@ -68,7 +67,7 @@ rule resolveAnchoredRule
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
-                'Scope '[ 'repeat RuleType ']
+                PrePattern [. PatternScope] [. PostPattern]
             ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
                 PreReplacement [. PatternOrder] [. PostReplacement]
@@ -99,10 +98,14 @@ rule resolveAnchoredFunction
         PostPattern [repeat literalOrVariable]
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
-        _ [dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [dotDotDot]
+        InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
+    deconstruct InnerReplacement
+        _ [opt dotDotDot]
+        Replacement [repeat literalOrExpression]
+        _ [opt dotDotDot]
+    construct PatternScope [repeat literalOrVariable]
+        'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -113,10 +116,6 @@ rule resolveAnchoredFunction
         _ [repeat literalOrVariable]
     construct newPattern [replacement]
         _ [constructPattern each InnerPattern]
-    construct InnerReplacement [replacement]
-        '...
-        Replacement
-        '...
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
             'deconstruct '* 'Scope 
@@ -137,7 +136,7 @@ rule resolveAnchoredFunction
     by
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']
-                'Scope '[ 'repeat RuleType ']
+                PrePattern [. PatternScope] [. PostPattern]
             ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
                 PreReplacement [. PatternOrder] [. PostReplacement]
@@ -200,27 +199,6 @@ function constructNewVar InnerLit [literalOrVariable]
     replace * [repeat literalOrExpression]
     by
         singleVar
-end function
-
-% Extract replacement from dotDotDots
-function constructReplacement
-    replace [replacement]
-        _ [opt dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [opt dotDotDot]
-    by
-        Replacement
-end function
-
-function constructEmbedReplacement
-    replace [replacement]
-        _ [repeat literalOrExpression]
-        '...
-        Replacement [repeat literalOrExpression]
-        '...
-        _ [repeat literalOrExpression]
-    by
-        Replacement
 end function
 
 % Case when rule moves pattern to the start of a repeat with dotDotDots
