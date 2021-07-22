@@ -9,7 +9,7 @@ function main
     replace [program]
         P [program]
     by
-        P [resolveAnchoredRule] [resolveAnchoredFunction]
+        P [resolveEmbeddedRule] [resolveEmbeddedFunction]
 end function
 
 % Matches rules in input 
