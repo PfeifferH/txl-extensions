@@ -13,7 +13,7 @@ function main
 end function
 
 % Matches rules in input 
-rule resolveAnchoredRule
+rule resolveEmbeddedRule
     replace [repeat statement]
         'rule RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
@@ -82,7 +82,7 @@ rule resolveAnchoredRule
 end rule
 
 % Matches functions in input
-rule resolveAnchoredFunction
+rule resolveEmbeddedFunction
     replace [repeat statement]
         'function RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
