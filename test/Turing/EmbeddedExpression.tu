@@ -1,5 +1,5 @@
 put "Start"
-
+put "Extra Start statement"
 var x := 6 + 7
 
 if x < 0 then 
