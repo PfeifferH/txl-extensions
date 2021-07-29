@@ -27,14 +27,14 @@ rule resolveEmbeddedRule
         Pattern [repeat literalOrVariable]
         '...
         PostPattern [repeat literalOrVariable]
-    construct _ [id]
-        _ [message "fired1"]
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
         InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
     construct Replacement [repeat literalOrExpression]
-        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement]
+        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
+    construct _ [id]
+        _ [message "fired1"]
     construct PatternScope [repeat literalOrVariable]
         'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
@@ -101,7 +101,7 @@ rule resolveEmbeddedFunction
         InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
     construct Replacement [repeat literalOrExpression]
-        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement]
+        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
     construct PatternScope [repeat literalOrVariable]
         'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
@@ -148,22 +148,6 @@ rule resolveEmbeddedFunction
         'end 'function  
 end rule
 
-% Compare PostReplacement and PostPattern to ensure that the replacement is parsed correctly
-rule CompareLiterals PostPattern [repeat literalOrVariable]
-    deconstruct PostPattern
-        PostPatternHead [literalOrVariable]
-        PostPatternTail [repeat literalOrVariable]
-    deconstruct PostPatternHead
-        Headlit [literal]
-    construct _ [id]
-        _ [message "firedLit"]
-    construct newLit [literalOrVariable]
-        PostPatternHead [debug]
-    
-    match * [literal]
-        HeadLit
-end rule
-
 function constructReplacementStart InnerReplacement [replacement]
     deconstruct InnerReplacement
         _ [startDotDotDot]
@@ -192,6 +176,13 @@ function constructReplacementEnd InnerReplacement [replacement]
     replace * [repeat literalOrExpression]
     by
         Replacement
+end function
+
+function constructReplacementDelete InnerReplacement [replacement]
+    deconstruct InnerReplacement
+        _ [dotDotDot]
+    replace * [repeat literalOrExpression]
+    by
 end function
 
 % Remove dotDotDots from pattern and add tail

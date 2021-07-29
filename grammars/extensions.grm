@@ -55,7 +55,7 @@ redefine replacement
 	   [repeat literalOrExpression]		[NL]
 	   [endDotDotDot]				[NL]
 	|  [repeat literalOrExpression]		[NL]
-	   [replacement]					[NL]
+	   [repeat replacement]					[NL]
 	   [repeat literalOrExpression]		[NL]
 	|  [dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]
