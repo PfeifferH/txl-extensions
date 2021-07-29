@@ -54,7 +54,7 @@ rule resolveAnchoredRule
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement]
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
@@ -113,7 +113,7 @@ rule resolveAnchoredFunction
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement]
     by
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']
@@ -228,6 +228,14 @@ function MoveToEnd RuleReplacement [replacement]
     replace [repeat literalOrExpression]
     by
         'Head '[ '. 'Tail '] '[ '. 'Replacement ']
+end function
+
+function deleteHeadAndTail RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        _ [repeat literalOrExpression]
+    replace [repeat literalOrExpression]
+    by
+        'Replacement
 end function
 
 % Add a deconstruct not Tail statement when moving replacement to the end of the block
