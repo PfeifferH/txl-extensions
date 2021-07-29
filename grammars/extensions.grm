@@ -5,7 +5,7 @@
 include "../grammars/txl.grm"
 
 keys
-	'...
+	'... '..s '..e
 end keys 
 
 define dotDotDot
@@ -14,6 +14,22 @@ end define
 
 define optDotDotDot
 	[opt dotDotDot]
+end define
+
+define startDotDotDot
+	'..s
+end define
+
+define optStartDotDotDot
+	[opt startDotDotDot]
+end define
+
+define endDotDotDot
+	'..e
+end define
+
+define optEndDotDotDot
+	[opt endDotDotDot]
 end define
 
 redefine pattern
@@ -29,11 +45,18 @@ redefine pattern
 end define
 
 redefine replacement 
-	[opt dotDotDot]						[NL]
+	[dotDotDot]							[NL]
 	[repeat literalOrExpression] 		[NL]
-	[opt dotDotDot]						[NL]
+	[dotDotDot]							[NL]
+	|  [startDotDotDot]				[NL]
+	   [repeat literalOrExpression]		[NL]
+	   [dotDotDot]						[NL]
+	|  [dotDotDot]						[NL]
+	   [repeat literalOrExpression]		[NL]
+	   [endDotDotDot]				[NL]
 	|  [repeat literalOrExpression]		[NL]
 	   [replacement]					[NL]
 	   [repeat literalOrExpression]		[NL]
+	|  [dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]
 end define 

@@ -15,14 +15,15 @@ rule EmbedIf
     replace [repeat declaration_or_statement]
         'if x [id] '= 1 'then
             ...
-            'var 'y ':= e1 [expn]
+            'var y [id] ':= e1 [expn]
             ...
         'end 'if
         OuterTail [repeat declaration_or_statement]
     by
         'if x '= 1 'then
             ...
-            x ':= e1
+            'var y ':= e1
+            ..e
         'end 'if
         OuterTail
 end rule

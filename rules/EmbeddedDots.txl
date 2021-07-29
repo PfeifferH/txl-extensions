@@ -27,14 +27,14 @@ rule resolveEmbeddedRule
         Pattern [repeat literalOrVariable]
         '...
         PostPattern [repeat literalOrVariable]
+    construct _ [id]
+        _ [message "fired1"]
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
         InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
-    deconstruct InnerReplacement
-        _ [opt dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [opt dotDotDot]
+    construct Replacement [repeat literalOrExpression]
+        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement]
     construct PatternScope [repeat literalOrVariable]
         'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
@@ -61,7 +61,7 @@ rule resolveEmbeddedRule
             'construct 'Head '[ 'repeat RuleType']
                 'Scope '[ 'deleteTail 'PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
-        _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
+        _ [deconstructTail InnerReplacement] [deconstructHead InnerReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
         _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement]
     by
@@ -100,10 +100,8 @@ rule resolveEmbeddedFunction
         PreReplacement [repeat literalOrExpression]
         InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
-    deconstruct InnerReplacement
-        _ [opt dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [opt dotDotDot]
+    construct Replacement [repeat literalOrExpression]
+        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement]
     construct PatternScope [repeat literalOrVariable]
         'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
@@ -130,7 +128,7 @@ rule resolveEmbeddedFunction
             'construct 'Head '[ 'repeat RuleType']
                 'Scope '[ 'deleteTail 'PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
-        _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
+        _ [deconstructTail InnerReplacement] [deconstructHead InnerReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
         _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement]
     by
@@ -149,6 +147,52 @@ rule resolveEmbeddedFunction
             'by
         'end 'function  
 end rule
+
+% Compare PostReplacement and PostPattern to ensure that the replacement is parsed correctly
+rule CompareLiterals PostPattern [repeat literalOrVariable]
+    deconstruct PostPattern
+        PostPatternHead [literalOrVariable]
+        PostPatternTail [repeat literalOrVariable]
+    deconstruct PostPatternHead
+        Headlit [literal]
+    construct _ [id]
+        _ [message "firedLit"]
+    construct newLit [literalOrVariable]
+        PostPatternHead [debug]
+    
+    match * [literal]
+        HeadLit
+end rule
+
+function constructReplacementStart InnerReplacement [replacement]
+    deconstruct InnerReplacement
+        _ [startDotDotDot]
+        Replacement [repeat literalOrExpression]
+        _ [dotDotDot]
+    replace * [repeat literalOrExpression]
+    by
+        Replacement
+end function
+
+function constructReplacement InnerReplacement [replacement]
+    deconstruct InnerReplacement
+        _ [dotDotDot]
+        Replacement [repeat literalOrExpression]
+        _ [dotDotDot]
+    replace * [repeat literalOrExpression]
+    by
+        Replacement
+end function
+
+function constructReplacementEnd InnerReplacement [replacement]
+    deconstruct InnerReplacement
+        _ [dotDotDot]
+        Replacement [repeat literalOrExpression]
+        _ [endDotDotDot]
+    replace * [repeat literalOrExpression]
+    by
+        Replacement
+end function
 
 % Remove dotDotDots from pattern and add tail
 rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
@@ -192,7 +236,7 @@ function constructNewLit InnerLit [literalOrVariable]
         singleLit
 end function
 
-% Case when in is a variable
+% Case when input is a variable
 function constructNewVar InnerLit [literalOrVariable]
     deconstruct InnerLit
         singleVar [varid]
@@ -204,6 +248,7 @@ end function
 % Case when rule moves pattern to the start of a repeat with dotDotDots
 function MoveToStart RuleReplacement [replacement]
     deconstruct RuleReplacement
+        '..s
         _ [repeat literalOrExpression]
         '...
     replace [repeat literalOrExpression]
@@ -236,6 +281,7 @@ function MoveToEnd RuleReplacement [replacement]
     deconstruct RuleReplacement
         '...
         _ [repeat literalOrExpression]
+        '..e
     replace [repeat literalOrExpression]
     by
         'Head '[ '. 'Tail '] '[ '. 'Replacement ']
@@ -246,6 +292,7 @@ function deconstructTail RuleReplacement [replacement]
     deconstruct RuleReplacement
         '...
         _ [repeat literalOrExpression+]
+        '..e
     replace [repeat constructDeconstructImportExportOrCondition]
     by
         'deconstruct 'not 'Tail
@@ -254,6 +301,7 @@ end function
 % Add a deconstruct not Tail statement when moving replacement to the start of the block
 function deconstructHead RuleReplacement [replacement]
     deconstruct RuleReplacement
+        '..s
         _ [repeat literalOrExpression+]
         '... 
     replace [repeat constructDeconstructImportExportOrCondition]
