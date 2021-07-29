@@ -1,0 +1,33 @@
+#!/bin/bash
+# Script to automate extended TXL for use by TXL programmers 
+# Usage:  ntxl inputfile txlfile.txl
+
+# Location of our extended TXL implementation
+LIB=.
+
+# Check our arguments
+if [ $# != 2 -o "${2: -4}" != ".txl" ]
+then
+    echo "Usage:  ntxl inputfile txlfile.txl"
+    exit 1
+fi
+input="$1"
+txlprog="$2"
+
+# Translate the user program to old TXL 
+/bin/rm -f translated-"$txlprog"
+
+txl -q "$txlprog" $LIB/rules/AnchoredDots.txl > translated-"$txlprog"
+
+if [ ! -f translated-"$txlprog" ]
+then
+    echo "Error, translation of $txlprog failed"
+    exit 2
+fi
+
+# Run the translated user's TXL program
+txl "$input" translated-"$txlprog"
+
+# For now, don't remove the translated program in case something's wrong
+# /bin/rm -f translated-"$txlprog"
+
