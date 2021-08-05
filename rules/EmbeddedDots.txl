@@ -31,8 +31,6 @@ rule resolveEmbeddedRule
         PostReplacement [repeat literalOrExpression]
     construct Replacement [repeat literalOrExpression]
         _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
-    construct _ [id]
-        _ [message "fired1"]
     construct PatternScope [repeat literalOrVariable]
         'Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]

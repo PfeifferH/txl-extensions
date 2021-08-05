@@ -16,7 +16,6 @@ function main
         P [resolveAnchoredRule] [resolveAnchoredFunction] [resolveEmbeddedRule] [resolveEmbeddedFunction] [resolveOuterRule] [resolveOuterFunction]
 end function
 
-
 % Helper functions shared by resolve* rules
 
 function constructReplacementStart InnerReplacement [replacement]
