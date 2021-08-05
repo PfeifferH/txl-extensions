@@ -1,17 +1,18 @@
-% EmbeddedDots.txl: Recognizes "..." notation in a TXL program to match embedded sequences
+% Outer.txl: Recognizes "..." notation in a TXL program to match embedded sequences
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-% Run the resolveEmbeddedRule and resolveAnchoredFunction rules on input
-function main2
+
+% Run the resolveOuterRule and resolveOuterFunction rules on input
+function main3
     replace [program]
         P [program]
     by
-        P [resolveEmbeddedRule] [resolveEmbeddedFunction]
+        P [resolveOuterRule] [resolveOuterFunction]
 end function
 
 % Matches rules in input 
-rule resolveEmbeddedRule
+rule resolveOuterRule
     replace [repeat statement]
         'rule RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
@@ -34,7 +35,7 @@ rule resolveEmbeddedRule
     construct _ [id]
         _ [message "fired1"]
     construct PatternScope [repeat literalOrVariable]
-        'Scope '[ 'repeat RuleType ']
+        '_Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -47,28 +48,34 @@ rule resolveEmbeddedRule
         _ [constructPattern each InnerPattern]
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
-            'deconstruct '* '_Scope 
-                RulePattern [deconstructScope RuleReplacement RuleType]
-            
-            'construct '_Pattern '[ 'repeat RuleType']
-                newPattern
-            'construct '_Replacement '[ 'repeat RuleType ']
-                Replacement
-            'construct '_PatternAndTail '[ 'repeat RuleType']
-                '_Pattern '[ '. 'Tail ']
-            'construct '_Head '[ 'repeat RuleType']
-                '_Scope '[ 'deleteTail '_PatternAndTail ']
+        'deconstruct '* '_Scope 
+            RulePattern [deconstructScope RuleReplacement RuleType]
+        'skipping '[ RuleType']
+        'deconstruct '* '_Tail
+            RulePattern [deconstructPostScope RuleReplacement RuleType]
+        'construct '_Pattern '[ 'repeat RuleType']
+            newPattern
+        'construct '_Replacement '[ 'repeat RuleType ']
+            Replacement
+        'construct '_PostReplacement '[ 'repeat RuleType ']
+            PostReplacement 
+        'construct '_PatternAndTail '[ 'repeat RuleType']
+            '_Pattern '[ '. '_Tail ']
+        'construct '_Head '[ 'repeat RuleType']
+            '_Scope '[ 'deleteTail 'PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail InnerReplacement] [deconstructHead InnerReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
         _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement]
+    construct newPostReplacement [repeat literalOrExpression]
+        '[ '. '_PostReplacement ']
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
-                PrePattern [. PatternScope] [. PostPattern]
+                PrePattern [. PatternScope]
             ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
-                PreReplacement [. PatternOrder] [. PostReplacement]
+                PreReplacement [. PatternOrder] [. newPostReplacement]
         'end 'rule
 
         'function 'deleteTail '_Tail '[ 'repeat RuleType']
@@ -80,7 +87,7 @@ rule resolveEmbeddedRule
 end rule
 
 % Matches functions in input
-rule resolveEmbeddedFunction
+rule resolveOuterFunction
     replace [repeat statement]
         'function RuleName [ruleid]
             'replace optStar [opt dollarStar] '[ 'repeat RuleType [typeid]']
@@ -101,7 +108,7 @@ rule resolveEmbeddedFunction
     construct Replacement [repeat literalOrExpression]
         _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
     construct PatternScope [repeat literalOrVariable]
-        'Scope '[ 'repeat RuleType ']
+        '_Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -114,17 +121,19 @@ rule resolveEmbeddedFunction
         _ [constructPattern each InnerPattern]
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
-            'deconstruct '* '_Scope 
-                RulePattern [deconstructScope RuleReplacement RuleType]
-            
-            'construct '_Pattern '[ 'repeat RuleType']
-                newPattern
-            'construct '_Replacement '[ 'repeat RuleType ']
-                Replacement
-            'construct '_PatternAndTail '[ 'repeat RuleType']
-                '_Pattern '[ '. '_Tail ']
-            'construct '_Head '[ 'repeat RuleType']
-                '_Scope '[ 'deleteTail '_PatternAndTail ']
+        'deconstruct '* '_Scope 
+            RulePattern [deconstructScope RuleReplacement RuleType]
+        'skipping '[ RuleType']
+        'deconstruct '* '_Tail
+            RulePattern [deconstructPostScope RuleReplacement RuleType]
+        'construct '_Pattern '[ 'repeat RuleType']
+            newPattern
+        'construct '_Replacement '[ 'repeat RuleType ']
+            Replacement
+        'construct '_PatternAndTail '[ 'repeat RuleType']
+            '_Pattern '[ '. '_Tail ']
+        'construct '_Head '[ 'repeat RuleType']
+            'Scope '[ 'deleteTail 'PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail InnerReplacement] [deconstructHead InnerReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
@@ -144,4 +153,15 @@ rule resolveEmbeddedFunction
                 '_Tail
             'by
         'end 'function  
+end rule
+
+rule deconstructPostScope RuleReplacement [replacement] RuleType [typeid]
+    replace [pattern]
+        _ [repeat literalOrVariable]
+        '...
+        _ [repeat literalOrVariable]
+        '...
+        PostPattern [repeat literalOrVariable]
+    by 
+        PostPattern
 end rule

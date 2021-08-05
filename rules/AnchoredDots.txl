@@ -1,11 +1,9 @@
-% EmbeddedSequence.txl: Recognizes "..." notation in a TXL program to match embedded sequences
+% AnchoredDots.txl: Recognizes "..." notation in a TXL program to match anchored sequences
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../grammars/extensions.grm"
-
 % Run the resolveAnchoredRule and resolveAnchoredFunction rules on input
-function main
+function main1
     replace [program]
         P [program]
     by
@@ -25,10 +23,8 @@ rule resolveAnchoredRule
         '...
         Pattern [repeat literalOrVariable]
         '...
-    deconstruct RuleReplacement
-        _ [opt dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [opt dotDotDot]
+    construct Replacement [repeat literalOrExpression]
+        _ [constructReplacementStart RuleReplacement] [constructReplacement RuleReplacement] [constructReplacementEnd RuleReplacement] [constructReplacementDelete RuleReplacement]
     
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
@@ -40,17 +36,17 @@ rule resolveAnchoredRule
         _ [constructPattern each InnerPattern]
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
-            'deconstruct '* 'Scope 
+            'deconstruct '* '_Scope 
                 RulePattern [deconstructScope RuleReplacement RuleType]
             
-            'construct 'Pattern '[ 'repeat RuleType']
+            'construct '_Pattern '[ 'repeat RuleType']
                 newPattern
-            'construct 'Replacement '[ 'repeat RuleType ']
-                RuleReplacement [constructReplacement]
-            'construct 'PatternAndTail '[ 'repeat RuleType']
-                'Pattern '[ '. 'Tail ']
-            'construct 'Head '[ 'repeat RuleType']
-                'Scope '[ 'deleteTail 'PatternAndTail ']
+            'construct '_Replacement '[ 'repeat RuleType ']
+                Replacement
+            'construct '_PatternAndTail '[ 'repeat RuleType']
+                '_Pattern '[ '. '_Tail ']
+            'construct '_Head '[ 'repeat RuleType']
+                '_Scope '[ 'deleteTail '_PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
@@ -58,16 +54,16 @@ rule resolveAnchoredRule
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
-                'Scope '[ 'repeat RuleType ']
+                '_Scope '[ 'repeat RuleType ']
             ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
                 PatternOrder
         'end 'rule
 
-        'function 'deleteTail 'Tail '[ 'repeat RuleType']
+        'function 'deleteTail '_Tail '[ 'repeat RuleType']
             'skipping '[ RuleType']
             'replace '* '[ 'repeat RuleType ']
-                'Tail
+                '_Tail
             'by
         'end 'function  
 end rule
@@ -85,10 +81,8 @@ rule resolveAnchoredFunction
         '...
         Pattern [repeat literalOrVariable]
         '...
-    deconstruct RuleReplacement
-        _ [opt dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [opt dotDotDot]
+    construct Replacement [repeat literalOrExpression]
+        _ [constructReplacementStart RuleReplacement] [constructReplacement RuleReplacement] [constructReplacementEnd RuleReplacement] [constructReplacementDelete RuleReplacement]
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -99,17 +93,17 @@ rule resolveAnchoredFunction
         _ [constructPattern each InnerPattern]
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
-            'deconstruct '* 'Scope 
+            'deconstruct '* '_Scope 
                 RulePattern [deconstructScope RuleReplacement RuleType]
             
-            'construct 'Pattern '[ 'repeat RuleType']
+            'construct '_Pattern '[ 'repeat RuleType']
                 newPattern
-            'construct 'Replacement '[ 'repeat RuleType ']
-                RuleReplacement [constructReplacement]
-            'construct 'PatternAndTail '[ 'repeat RuleType']
-                'Pattern '[ '. 'Tail ']
-            'construct 'Head '[ 'repeat RuleType']
-                'Scope '[ 'deleteTail 'PatternAndTail ']
+            'construct '_Replacement '[ 'repeat RuleType ']
+                Replacement
+            'construct '_PatternAndTail '[ 'repeat RuleType']
+                '_Pattern '[ '. '_Tail ']
+            'construct '_Head '[ 'repeat RuleType']
+                '_Scope '[ 'deleteTail '_PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
@@ -117,141 +111,16 @@ rule resolveAnchoredFunction
     by
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']
-                'Scope '[ 'repeat RuleType ']
+                '_Scope '[ 'repeat RuleType ']
             ConstructorsAndDeconstructors [ . OptDeconstructHeadOrTail ]
             'by
                 PatternOrder
         'end 'function
 
-        'function 'deleteTail 'Tail '[ 'repeat RuleType']
+        'function 'deleteTail '_Tail '[ 'repeat RuleType']
             'skipping '[ RuleType']
             'replace '* '[ 'repeat RuleType ']
-                'Tail
+                '_Tail
             'by
         'end 'function  
 end rule
-
-% Remove dotDotDots from pattern and add tail
-rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
-    construct Tail [literalOrVariable]
-        'Tail '[ 'repeat RuleType ']
-    replace [pattern]
-        '...
-        Pattern [repeat literalOrVariable]
-        '...
-    by
-        Pattern [. Tail]
-end rule
-
-% Remove all instances of a type (ex: 'var x [id] -> var x)
-rule removeTypes
-    replace [literalOrVariable]
-        Var [varid] _ [type] 
-    by
-        Var
-end rule
-
-% Extract literal or variable from input. Since the literalOrVariable can only be one of these, the output literalOrExpression is of size 1 
-function constructPattern InnerLit [literalOrVariable]
-    construct newLit [repeat literalOrExpression]
-        _ [constructNewLit InnerLit]
-    construct newVar [repeat literalOrExpression]
-        _ [constructNewVar InnerLit]
-    replace * [repeat literalOrExpression]
-    by
-        newLit [. newVar]
-end function
-
-% Case when input is a literal
-function constructNewLit InnerLit [literalOrVariable]
-    deconstruct InnerLit
-        singleLit [literal]
-    replace * [repeat literalOrExpression]
-    by
-        singleLit
-end function
-
-% Case when in is a variable
-function constructNewVar InnerLit [literalOrVariable]
-    deconstruct InnerLit
-        singleVar [varid]
-    replace * [repeat literalOrExpression]
-    by
-        singleVar
-end function
-
-% Extract replacement from dotDotDots
-function constructReplacement
-    replace [replacement]
-        _ [opt dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [opt dotDotDot]
-    by
-        Replacement
-end function
-
-% Case when rule moves pattern to the start of a repeat with dotDotDots
-function MoveToStart RuleReplacement [replacement]
-    deconstruct RuleReplacement
-        _ [repeat literalOrExpression]
-        '...
-    replace [repeat literalOrExpression]
-    by
-        'Replacement '[ '. 'Head '] '[ '. 'Tail ']
-end function
-
-% Case when pattern embedded in dotDotDots deleted
-function NoMove RuleReplacement [replacement]
-    deconstruct RuleReplacement 
-        '...
-    replace [repeat literalOrExpression]
-    by
-        'Head '[ '. 'Tail ']
-end function
-
-% Case when pattern embedded in dotDotDots is not moved
-function NoMoveEmbedded RuleReplacement [replacement]
-    deconstruct RuleReplacement 
-        '...
-        _ [repeat literalOrExpression]
-        '...
-    replace [repeat literalOrExpression]
-    by
-        'Head '[ '. 'Replacement '] '[ '. 'Tail ']
-end function
-
-% Case when rule moves pattern to the end of a repeat with dotDotDots
-function MoveToEnd RuleReplacement [replacement]
-    deconstruct RuleReplacement
-        '...
-        _ [repeat literalOrExpression]
-    replace [repeat literalOrExpression]
-    by
-        'Head '[ '. 'Tail '] '[ '. 'Replacement ']
-end function
-
-% Add a deconstruct not Tail statement when moving replacement to the end of the block
-function deconstructTail RuleReplacement [replacement]
-    deconstruct RuleReplacement
-        '...
-        _ [repeat literalOrExpression+]
-    replace [repeat constructDeconstructImportExportOrCondition]
-    by
-        'deconstruct 'not 'Tail
-end function
-
-% Add a deconstruct not Tail statement when moving replacement to the start of the block
-function deconstructHead RuleReplacement [replacement]
-    deconstruct RuleReplacement
-        _ [repeat literalOrExpression+]
-        '... 
-    replace [repeat constructDeconstructImportExportOrCondition]
-    by
-        'deconstruct 'not 'Head
-end function
-
-% No "deconstruct not" statements necessary if not moving the replacement to a different position in block
-function noDeconstruct
-    replace [repeat constructDeconstructImportExportOrCondition]
-    by
-end function

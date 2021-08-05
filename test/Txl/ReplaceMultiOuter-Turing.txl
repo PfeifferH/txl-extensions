@@ -1,4 +1,4 @@
-% MoveToEndMulti-Turing.txl: Move statements to the end of a sequence
+% DeleteMulti-Turing.txl: Delete multiple Turing statements
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
@@ -8,22 +8,30 @@ function main
     replace [program]
         P [program]
     by
-        P [MoveToEndMulti]
+        P [ReplaceMultiOuter]
 end function
 
-rule MoveToEndMulti
+rule ReplaceMultiOuter
     replace [repeat declaration_or_statement]
-        ...
         'var x [id] ':= e1 [expn]
+        ...
         'if x '< 0 'then 
             x ':= 0 
         'end 'if
         ...
+        'if x '> e2 [expn] 'then 
+            x ':= e2 
+        'end 'if
+        OuterTail [repeat declaration_or_statement]
     by
+        'var x ':= 1
         ...
-        'var x ':= e1
+        'if x '> e2 'then 
+            x ':= e2 
+        'end 'if
+        ...
         'if x '< 0 'then 
             x ':= 0 
         'end 'if
-        ..
+        OuterTail
 end rule

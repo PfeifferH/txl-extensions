@@ -20,6 +20,7 @@ rule MoveToStartMulti
         '}
         ...
     by
+        ..
         'int x '= e1';
         'if '( x '< 0') '{ 
             x '= 0'; 

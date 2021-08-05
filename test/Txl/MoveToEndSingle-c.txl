@@ -19,4 +19,5 @@ rule MoveToEndSingle
     by
         ...
         'int x '= e1';
+        ..
 end rule
