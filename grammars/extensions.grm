@@ -40,7 +40,7 @@ redefine replacement
 	   [repeat literalOrExpression]		[NL]
 	   [anchorDotDot]					[NL]
 	|  [repeat literalOrExpression]		[NL]
-	   [repeat replacement]				[NL]
+	   [replacement]				[NL]
 	   [repeat literalOrExpression]		[NL]
 	|  [dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]

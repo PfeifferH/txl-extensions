@@ -32,7 +32,7 @@ rule resolveEmbeddedRule
     construct Replacement [repeat literalOrExpression]
         _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
     construct PatternScope [repeat literalOrVariable]
-        'Scope '[ 'repeat RuleType ']
+        '_Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -53,7 +53,7 @@ rule resolveEmbeddedRule
             'construct '_Replacement '[ 'repeat RuleType ']
                 Replacement
             'construct '_PatternAndTail '[ 'repeat RuleType']
-                '_Pattern '[ '. 'Tail ']
+                '_Pattern '[ '. '_Tail ']
             'construct '_Head '[ 'repeat RuleType']
                 '_Scope '[ 'deleteTail '_PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
@@ -99,7 +99,7 @@ rule resolveEmbeddedFunction
     construct Replacement [repeat literalOrExpression]
         _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
     construct PatternScope [repeat literalOrVariable]
-        'Scope '[ 'repeat RuleType ']
+        '_Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
