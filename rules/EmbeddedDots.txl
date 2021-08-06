@@ -30,7 +30,7 @@ rule resolveEmbeddedRule
         InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
     construct Replacement [repeat literalOrExpression]
-        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
+        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]  [constructReplacementDefault RuleReplacement]
     construct PatternScope [repeat literalOrVariable]
         '_Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
@@ -59,7 +59,7 @@ rule resolveEmbeddedRule
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail InnerReplacement] [deconstructHead InnerReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement]
+        _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement] [deleteHeadAndTail InnerReplacement]
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
@@ -97,7 +97,7 @@ rule resolveEmbeddedFunction
         InnerReplacement [replacement]
         PostReplacement [repeat literalOrExpression]
     construct Replacement [repeat literalOrExpression]
-        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]
+        _ [constructReplacementStart InnerReplacement] [constructReplacement InnerReplacement] [constructReplacementEnd InnerReplacement] [constructReplacementDelete InnerReplacement]  [constructReplacementDefault RuleReplacement]
     construct PatternScope [repeat literalOrVariable]
         '_Scope '[ 'repeat RuleType ']
     construct PatternWithoutTypes [pattern]
@@ -126,7 +126,7 @@ rule resolveEmbeddedFunction
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail InnerReplacement] [deconstructHead InnerReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement]
+        _ [MoveToStart InnerReplacement] [NoMove InnerReplacement] [NoMoveEmbedded InnerReplacement] [MoveToEnd InnerReplacement] [deleteHeadAndTail InnerReplacement]
     by
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']

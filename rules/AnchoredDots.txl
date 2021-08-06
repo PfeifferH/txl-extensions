@@ -24,7 +24,7 @@ rule resolveAnchoredRule
         Pattern [repeat literalOrVariable]
         '...
     construct Replacement [repeat literalOrExpression]
-        _ [constructReplacementStart RuleReplacement] [constructReplacement RuleReplacement] [constructReplacementEnd RuleReplacement] [constructReplacementDelete RuleReplacement]
+        _ [constructReplacementStart RuleReplacement] [constructReplacement RuleReplacement] [constructReplacementEnd RuleReplacement] [constructReplacementDelete RuleReplacement] [constructReplacementDefault RuleReplacement]
     
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
@@ -50,7 +50,7 @@ rule resolveAnchoredRule
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement]
     by
         'rule RuleName 
             'replace optStar '[ 'repeat RuleType']
@@ -82,7 +82,7 @@ rule resolveAnchoredFunction
         Pattern [repeat literalOrVariable]
         '...
     construct Replacement [repeat literalOrExpression]
-        _ [constructReplacementStart RuleReplacement] [constructReplacement RuleReplacement] [constructReplacementEnd RuleReplacement] [constructReplacementDelete RuleReplacement]
+        _ [constructReplacementStart RuleReplacement] [constructReplacement RuleReplacement] [constructReplacementEnd RuleReplacement] [constructReplacementDelete RuleReplacement] [constructReplacementDefault RuleReplacement]
     construct PatternWithoutTypes [pattern]
         RulePattern [removeTypes]
     deconstruct PatternWithoutTypes
@@ -107,7 +107,7 @@ rule resolveAnchoredFunction
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement]
+        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement]
     by
         'function RuleName 
             'replace optStar '[ 'repeat RuleType']

@@ -55,6 +55,14 @@ function constructReplacementDelete InnerReplacement [replacement]
     by
 end function
 
+function constructReplacementDefault InnerReplacement [replacement]
+    deconstruct InnerReplacement
+        Replacement [repeat literalOrExpression]
+    replace * [repeat literalOrExpression]
+    by
+        Replacement
+end function
+
 % Remove dotDotDots from pattern and add tail
 rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
     construct Tail [literalOrVariable]
@@ -146,6 +154,15 @@ function MoveToEnd RuleReplacement [replacement]
     replace [repeat literalOrExpression]
     by
         '_Head '[ '. '_Tail '] '[ '. '_Replacement ']
+end function
+
+% Case when Head and Tail statements are removed
+function deleteHeadAndTail RuleReplacement [replacement]
+    deconstruct RuleReplacement
+        _ [repeat literalOrExpression]
+    replace [repeat literalOrExpression]
+    by
+        '_Replacement
 end function
 
 % Add a deconstruct not Tail statement when moving replacement to the end of the block
