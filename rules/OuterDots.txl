@@ -26,6 +26,8 @@ rule resolveOuterRule
         Pattern [repeat literalOrVariable]
         '...
         PostPattern [repeat literalOrVariable]
+    skipping [literalOrVariable] deconstruct * PrePattern
+        ';
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
         InnerReplacement [replacement]
@@ -99,6 +101,8 @@ rule resolveOuterFunction
         Pattern [repeat literalOrVariable]
         '...
         PostPattern [repeat literalOrVariable]
+    skipping [literalOrVariable] deconstruct * PrePattern
+        ';
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
         InnerReplacement [replacement]

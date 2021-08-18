@@ -13,7 +13,7 @@ function main
     replace [program]
         P [program]
     by
-        P [resolveAnchoredRule] [resolveAnchoredFunction] [resolveEmbeddedRule] [resolveEmbeddedFunction] [resolveOuterRule] [resolveOuterFunction]
+        P [resolveAnchoredRule] [resolveAnchoredFunction] [resolveOuterRule] [resolveOuterFunction] [resolveEmbeddedRule] [resolveEmbeddedFunction] 
 end function
 
 % Helper functions shared by resolve* rules

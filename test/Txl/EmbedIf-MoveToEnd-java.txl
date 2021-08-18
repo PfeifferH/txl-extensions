@@ -1,8 +1,8 @@
-% EmbedIf-MoveToEnd-Turing.txl: Resolve embedded statements within an if statement
+% EmbedIf-MoveToEnd-java.txl: Resolve embedded statements within an if statement
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/java.grm"
 
 function main
     replace [program]
@@ -13,17 +13,17 @@ end function
 
 rule EmbedIf
     replace [repeat declaration_or_statement]
-        'if x [id] '= 1 'then
+        'if '( x [id] '== 1 ') '{
             ...
-            'var y [id] ':= e1 [expn]
+            'int y [id] '= e1 [expression]';
             ...
-        'end 'if
+        '}
         OuterTail [repeat declaration_or_statement]
     by
-        'if x '= 1 'then
+        'if '( x '== 1 ') '{
             ...
-            'var y ':= e1
+            'int y '= e1';
             ..
-        'end 'if
+        '}
         OuterTail
 end rule

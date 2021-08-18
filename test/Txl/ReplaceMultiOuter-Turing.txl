@@ -1,4 +1,4 @@
-% DeleteMulti-Turing.txl: Delete multiple Turing statements
+% ReplaceMultiOuter-java.txl: Replace multiple Turing statements with statements inside and outside of dotDotDots
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
