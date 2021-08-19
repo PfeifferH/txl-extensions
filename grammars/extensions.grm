@@ -45,3 +45,36 @@ redefine replacement
 	|  [dotDotDot]						[NL]
 	|  [repeat literalOrExpression]		[NL]
 end define 
+
+define rule_function
+    'rule | 'function
+end define
+
+redefine ruleStatement
+        [rule_function] [ruleid] [repeat formalArgument]                [NL][IN][IN]
+            [repeat constructDeconstructImportExportOrCondition] 	
+			[EX] [opt skippingType] 
+			'replace [opt dollarStar] [SP] [type]			[NL][IN] 
+				[pattern] 
+			[repeat constructDeconstructImportExportOrCondition] 
+			[EX] 'by						[NL][IN] 
+				[replacement] 					[EX][EX]
+        'end [rule_function]                                            [NL][NL]
+    |
+        [rule_function] [ruleid] [repeat formalArgument]                [NL][IN][IN]
+            [repeat constructDeconstructImportExportOrCondition] 	
+			[EX] [opt skippingType] 
+			'match [opt dollarStar] [SP] [type]			[NL][IN]
+				[pattern] 					[EX][EX]
+			[repeat constructDeconstructImportExportOrCondition] 
+        'end [rule_function]                                            [NL][NL]
+end define
+
+redefine ruleApplication
+        [SP] [type] [SP]
+    |   ...
+end define
+
+redefine pattern
+        [repeat literalOrExpression]            [NL]
+end define
