@@ -2,9 +2,10 @@
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
+include "../grammars/extensions.grm"
 
 % Run the resolveOuterRule and resolveOuterFunction rules on input
-function main3
+function main
     replace [program]
         P [program]
     by
@@ -26,8 +27,6 @@ rule resolveOuterRule
         Pattern [repeat literalOrVariable]
         '...
         PostPattern [repeat literalOrVariable]
-    skipping [literalOrVariable] deconstruct * PrePattern
-        ';
     deconstruct RuleReplacement
         PreReplacement [repeat literalOrExpression]
         InnerReplacement [replacement]

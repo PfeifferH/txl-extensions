@@ -16,35 +16,24 @@ define optDotDotDot
 	[opt dotDotDot]
 end define
 
-define anchorDotDot
-	'..
-end define
-
 redefine pattern
-	[repeat literalOrVariable]		[NL]
-	[dotDotDot]						[NL]
-	[repeat literalOrVariable]		[NL]
-	[dotDotDot]						[NL]
-	[repeat literalOrVariable]		[NL]
-	|  [repeat literalOrVariable]		[NL]
+        [repeat literalOrVariable]            [NL]
+        '...                                  [NL]
+        [repeat literalOrVariable]            [NL]
+        '...                                  [NL]
+        [repeat literalOrVariable]            [NL]
+    | 
+        [repeat literalOrVariable]            [NL]
 end define
 
-redefine replacement 
-	[dotDotDot]							[NL]
-	[repeat literalOrExpression] 		[NL]
-	[dotDotDot]							[NL]
-	|  [anchorDotDot]					[NL]
-	   [repeat literalOrExpression]		[NL]
-	   [dotDotDot]						[NL]
-	|  [dotDotDot]						[NL]
-	   [repeat literalOrExpression]		[NL]
-	   [anchorDotDot]					[NL]
-	|  [repeat literalOrExpression]		[NL]
-	   [replacement]				[NL]
-	   [repeat literalOrExpression]		[NL]
-	|  [dotDotDot]						[NL]
-	|  [repeat literalOrExpression]		[NL]
-end define 
+redefine replacement
+        [repeat literalOrExpression]            [NL]
+        [opt dotDotDot]                         [NL]
+        [repeat literalOrExpression]            [NL]
+        [opt dotDotDot]                         [NL]
+        [repeat literalOrExpression]            [NL]
+end define
+
 
 define rule_function
     'rule | 'function
@@ -73,8 +62,4 @@ end define
 redefine ruleApplication
         [SP] [type] [SP]
     |   ...
-end define
-
-redefine pattern
-        [repeat literalOrExpression]            [NL]
 end define
