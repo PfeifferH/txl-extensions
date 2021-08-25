@@ -24,7 +24,7 @@ rule ReplaceMultiOuter
         '}
         OuterTail [repeat block_item]
     by
-        'int x '= 1
+        'int x '= 1';
         ...
         'if '( x '> e2 ') '{ 
             x '= e2'; 

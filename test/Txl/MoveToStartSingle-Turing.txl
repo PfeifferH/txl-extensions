@@ -17,7 +17,6 @@ rule MoveToStartSingle
         'var x [id] ':= e1 [expn]
         ...
     by
-        ..
         'var x ':= e1
         ...
 end rule

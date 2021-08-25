@@ -61,7 +61,7 @@ rule resolveOuter
         'construct '_PatternAndTail '[ 'repeat RuleType']
             '_Pattern '[ '. '_Tail ']
         'construct '_Head '[ 'repeat RuleType']
-            '_Scope '[ 'deleteTail 'PatternAndTail ']
+            '_Scope '[ 'deleteTail '_PatternAndTail ']
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
@@ -98,50 +98,6 @@ end rule
 
 % Helper functions shared by resolve* rules
 
-function constructReplacementStart InnerReplacement [replacement]
-    deconstruct InnerReplacement
-        _ [anchorDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [dotDotDot]
-    replace * [repeat literalOrExpression]
-    by
-        Replacement
-end function
-
-function constructReplacement InnerReplacement [replacement]
-    deconstruct InnerReplacement
-        _ [dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [dotDotDot]
-    replace * [repeat literalOrExpression]
-    by
-        Replacement
-end function
-
-function constructReplacementEnd InnerReplacement [replacement]
-    deconstruct InnerReplacement
-        _ [dotDotDot]
-        Replacement [repeat literalOrExpression]
-        _ [anchorDotDot]
-    replace * [repeat literalOrExpression]
-    by
-        Replacement
-end function
-
-function constructReplacementDelete InnerReplacement [replacement]
-    deconstruct InnerReplacement
-        _ [dotDotDot]
-    replace * [repeat literalOrExpression]
-    by
-end function
-
-function constructReplacementDefault InnerReplacement [replacement]
-    deconstruct InnerReplacement
-        Replacement [repeat literalOrExpression]
-    replace * [repeat literalOrExpression]
-    by
-        Replacement
-end function
 
 % Remove dotDotDots from pattern and add tail
 rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
@@ -156,25 +112,6 @@ rule deconstructScope RuleReplacement [replacement] RuleType [typeid]
     by
         Pattern [. Tail]
 end rule
-
-% Remove all instances of a type (ex: 'var x [id] -> var x)
-rule removeTypes
-    replace [literalOrVariable]
-        Var [varid] _ [type] 
-    by
-        Var
-end rule
-
-% Extract literal or variable from input. Since the literalOrVariable can only be one of these, the output literalOrExpression is of size 1 
-function constructPattern InnerLit [literalOrVariable]
-    construct newLit [repeat literalOrExpression]
-        _ [constructNewLit InnerLit]
-    construct newVar [repeat literalOrExpression]
-        _ [constructNewVar InnerLit]
-    replace * [repeat literalOrExpression]
-    by
-        newLit [. newVar]
-end function
 
 % Case when input is a literal
 function constructNewLit InnerLit [literalOrVariable]

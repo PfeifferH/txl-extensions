@@ -25,5 +25,4 @@ rule MoveToEndMulti
         'if x '< 0 'then 
             x ':= 0 
         'end 'if
-        ..
 end rule

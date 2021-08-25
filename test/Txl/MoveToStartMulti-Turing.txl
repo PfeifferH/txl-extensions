@@ -20,7 +20,6 @@ rule MoveToStartMulti
         'end 'if
         ...
     by
-        ..
         'var x ':= e1
         'if x '< 0 'then
             x ':= 0

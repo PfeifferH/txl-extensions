@@ -23,7 +23,6 @@ rule EmbedIf
         'if x '= 1 'then
             ...
             'var y ':= e1
-            ..
         'end 'if
         OuterTail
 end rule

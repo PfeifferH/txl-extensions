@@ -19,5 +19,4 @@ rule MoveToEndSingle
     by
         ...
         'var x ':= e1
-        ..
 end rule

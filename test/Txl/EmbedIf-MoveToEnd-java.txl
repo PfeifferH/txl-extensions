@@ -23,7 +23,6 @@ rule EmbedIf
         'if '( x '== 1 ') '{
             ...
             'int y '= e1';
-            ..
         '}
         OuterTail
 end rule

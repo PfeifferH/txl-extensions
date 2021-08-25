@@ -17,7 +17,6 @@ rule MoveToStartSingle
         'int x [id] '= e1 [expression]';
         ...
     by
-        ..
         'int x '= e1';
         ...
 end rule
