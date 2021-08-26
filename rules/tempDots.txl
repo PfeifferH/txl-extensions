@@ -45,13 +45,14 @@ rule resolveOuter
         _ [repeat literalOrVariable]
     construct newPattern [replacement]
         _ [constructPattern each InnerPattern]
+
     construct ConstructorsAndDeconstructors [repeat constructDeconstructImportExportOrCondition]
         'skipping '[ RuleType']
         'deconstruct '* '_Scope 
             RulePattern [deconstructScope RuleReplacement RuleType]
         'skipping '[ RuleType']
         'deconstruct '* '_Tail
-            RulePattern [deconstructPostScope RuleReplacement RuleType]
+            RulePattern [deconstructPostScope]
         'construct '_Pattern '[ 'repeat RuleType']
             newPattern
         'construct '_Replacement '[ 'repeat RuleType ']
@@ -65,7 +66,7 @@ rule resolveOuter
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement] [NoMove RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement]
+        _ [MoveToStart RuleReplacement][NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement] [NoMove RuleReplacement] 
     construct newPostReplacement [repeat literalOrExpression]
         '[ '. '_PostReplacement ']
     by
@@ -85,7 +86,7 @@ rule resolveOuter
         'end 'function  
 end rule
 
-rule deconstructPostScope RuleReplacement [replacement] RuleType [typeid]
+rule deconstructPostScope
     replace [pattern]
         _ [repeat literalOrVariable]
         '...
@@ -153,8 +154,9 @@ end function
 % Case when rule moves pattern to the start of a repeat with dotDotDots
 function MoveToStart RuleReplacement [replacement]
     deconstruct RuleReplacement
-        _ [repeat literalOrExpression]
+        _ [repeat literalOrExpression+]
         '...
+        _ [repeat literalOrExpression]
     replace [repeat literalOrExpression]
     by
         '_Replacement '[ '. '_Head '] '[ '. '_Tail ']
@@ -162,8 +164,10 @@ end function
 
 % Case when pattern embedded in dotDotDots deleted
 function NoMove RuleReplacement [replacement]
-    deconstruct RuleReplacement 
+    deconstruct RuleReplacement
+        _ [repeat literalOrExpression] 
         '...
+        _ [repeat literalOrExpression]
     replace [repeat literalOrExpression]
     by
         '_Head '[ '. '_Tail ']
@@ -174,7 +178,7 @@ function NoMoveEmbedded RuleReplacement [replacement]
     deconstruct RuleReplacement 
         _ [repeat literalOrExpression]
         '...
-        _ [repeat literalOrExpression]
+        _ [repeat literalOrExpression+]
         '...
         _ [repeat literalOrExpression]
     replace [repeat literalOrExpression]
@@ -185,8 +189,9 @@ end function
 % Case when rule moves pattern to the end of a repeat with dotDotDots
 function MoveToEnd RuleReplacement [replacement]
     deconstruct RuleReplacement
-        '...
         _ [repeat literalOrExpression]
+        '...
+        _ [repeat literalOrExpression+]
     replace [repeat literalOrExpression]
     by
         '_Head '[ '. '_Tail '] '[ '. '_Replacement ']
@@ -204,18 +209,21 @@ end function
 % Add a deconstruct not Tail statement when moving replacement to the end of the block
 function deconstructTail RuleReplacement [replacement]
     deconstruct RuleReplacement
+        _ [repeat literalOrExpression]
         '...
         _ [repeat literalOrExpression+]
+        _ [repeat literalOrExpression]
     replace [repeat constructDeconstructImportExportOrCondition]
     by
         'deconstruct 'not '_Tail
 end function
 
-% Add a deconstruct not Tail statement when moving replacement to the start of the block
+% Add a deconstruct not Head statement when moving replacement to the start of the block
 function deconstructHead RuleReplacement [replacement]
     deconstruct RuleReplacement
         _ [repeat literalOrExpression+]
-        '... 
+        '...
+        _ [repeat literalOrExpression]
     replace [repeat constructDeconstructImportExportOrCondition]
     by
         'deconstruct 'not '_Head

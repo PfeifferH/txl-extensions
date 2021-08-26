@@ -1,3 +1,5 @@
+package test.java;
+
 class EmbeddedExpression
 {
     public static void main(String args[])
