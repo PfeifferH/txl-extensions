@@ -1,4 +1,4 @@
-% ReplaceMultiOuter-java.txl: Replace multiple c statements with statements inside and outside of dotDotDots
+% ReplaceMultiOuter-c.txl: Replace multiple c statements with statements inside and outside of dotDotDots
 % Hayden Pfeiffer
 % Queen's University, June 2021
 

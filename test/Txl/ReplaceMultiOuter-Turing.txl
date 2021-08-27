@@ -1,4 +1,4 @@
-% ReplaceMultiOuter-java.txl: Replace multiple Turing statements with statements inside and outside of dotDotDots
+% ReplaceMultiOuter-Turing.txl: Replace multiple Turing statements with statements inside and outside of dotDotDots
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
