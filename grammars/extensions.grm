@@ -1,6 +1,6 @@
-% TXL grammar for TXL 10.5
-% J.R. Cordy, Queen's University
-% March 2009
+% TXL grammar extension for TXL 10.5 to include dotDotDot syntax
+% Hayden Pfeiffer, Queen's University
+% August 2021
 
 include "../grammars/txl.grm"
 
