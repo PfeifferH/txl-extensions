@@ -66,7 +66,7 @@ rule resolveOuter
     construct OptDeconstructHeadOrTail [repeat constructDeconstructImportExportOrCondition]
         _ [deconstructTail RuleReplacement] [deconstructHead RuleReplacement] [noDeconstruct]
     construct PatternOrder [repeat literalOrExpression]
-        _ [MoveToStart RuleReplacement][NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement] [NoMove RuleReplacement] 
+        _ [MoveToStart RuleReplacement] [NoMoveWithTail RuleReplacement] [NoMoveEmbedded RuleReplacement] [MoveToEnd RuleReplacement] [deleteHeadAndTail RuleReplacement] [NoMove RuleReplacement] 
     construct newPostReplacement [repeat literalOrExpression]
         '[ '. '_PostReplacement ']
     by
@@ -173,6 +173,17 @@ function NoMove RuleReplacement [replacement]
         '_Head '[ '. '_Tail ']
 end function
 
+function NoMoveWithTail RuleReplacement [replacement]
+    deconstruct RuleReplacement 
+        _ [repeat literalOrExpression]
+        '...
+        _ [repeat literalOrExpression+]
+        '...
+    replace [repeat literalOrExpression]
+    by
+        '_Head '[ '. '_Replacement '] '[ '. '_Tail ']
+end function
+
 % Case when pattern embedded in dotDotDots is not moved
 function NoMoveEmbedded RuleReplacement [replacement]
     deconstruct RuleReplacement 
@@ -183,7 +194,7 @@ function NoMoveEmbedded RuleReplacement [replacement]
         _ [repeat literalOrExpression]
     replace [repeat literalOrExpression]
     by
-        '_Head '[ '. '_Replacement '] '[ '. '_Tail ']
+        '_Head '[ '. '_Replacement ']
 end function
 
 % Case when rule moves pattern to the end of a repeat with dotDotDots

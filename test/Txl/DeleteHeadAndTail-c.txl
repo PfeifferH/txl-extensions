@@ -1,8 +1,8 @@
-% DeleteHeadAndTail-Turing.txl: Delete all surrounding statements
+% DeleteHeadAndTail-c.txl: Delete all surrounding statements
 % Hayden Pfeiffer
 % Queen's University, June 2021
 
-include "../../grammars/Turing.Grm"
+include "../../grammars/c.grm"
 
 function main
     replace [program]
@@ -12,10 +12,10 @@ function main
 end function
 
 function DeleteHeadAndTail
-    replace * [repeat declaration_or_statement]
+    replace * [repeat block_item]
         ...
-        'var x [id] ':= e1 [expn]
+        'int x [id] '= e1 [assignment_expression]';
         ...
     by
-        'var x ':= e1
+        'int x '= e1';
 end function

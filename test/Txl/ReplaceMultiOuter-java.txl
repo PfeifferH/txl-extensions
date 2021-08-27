@@ -19,12 +19,12 @@ rule ReplaceMultiOuter
             x '= 0'; 
         '}
         ...
-        'if '( x '> e2 [expression] ') '{
+        'if '( x '> e2 [shift_expression] ') '{
             x '= e2'; 
         '}
         OuterTail [repeat declaration_or_statement]
     by
-        'int x '= 1
+        'int x '= 1';
         ...
         'if '( x '> e2 ') '{ 
             x '= e2'; 
