@@ -1,11 +1,11 @@
-% TXL grammar for TXL 10.5
-% J.R. Cordy, Queen's University
-% March 2009
+% TXL grammar extension for TXL 10.5 to include dotDotDot syntax
+% Hayden Pfeiffer, Queen's University
+% August 2021
 
 include "../grammars/txl.grm"
 
 keys
-	'...
+	'... '..
 end keys 
 
 define dotDotDot
@@ -17,15 +17,49 @@ define optDotDotDot
 end define
 
 redefine pattern
-	[dotDotDot]							[NL]
-	[repeat literalOrVariable]			[NL]
-	[dotDotDot]							[NL]
-	|  [repeat literalOrVariable]		[NL]
+        [repeat literalOrVariable]            [NL]
+        '...                                  [NL]
+        [repeat literalOrVariable]            [NL]
+        '...                                  [NL]
+        [repeat literalOrVariable]            [NL]
+    | 
+        [repeat literalOrVariable]            [NL]
 end define
 
-redefine replacement 
-	[opt dotDotDot]						[NL]
-	[repeat literalOrExpression] 		[NL]
-	[opt dotDotDot]						[NL]
-	|  [repeat literalOrExpression]		[NL]
-end define 
+redefine replacement
+        [repeat literalOrExpression]            [NL]
+        [opt dotDotDot]                         [NL]
+        [repeat literalOrExpression]            [NL]
+        [opt dotDotDot]                         [NL]
+        [repeat literalOrExpression]            [NL]
+end define
+
+
+define rule_function
+    'rule | 'function
+end define
+
+redefine ruleStatement
+        [rule_function] [ruleid] [repeat formalArgument]                [NL][IN][IN]
+            [repeat constructDeconstructImportExportOrCondition] 	
+			[EX] [opt skippingType] 
+			'replace [opt dollarStar] [SP] [type]			[NL][IN] 
+				[pattern] 
+			[repeat constructDeconstructImportExportOrCondition] 
+			[EX] 'by						[NL][IN] 
+				[replacement] 					[EX][EX]
+        'end [rule_function]                                            [NL][NL]
+    |
+        [rule_function] [ruleid] [repeat formalArgument]                [NL][IN][IN]
+            [repeat constructDeconstructImportExportOrCondition] 	
+			[EX] [opt skippingType] 
+			'match [opt dollarStar] [SP] [type]			[NL][IN]
+				[pattern] 					[EX][EX]
+			[repeat constructDeconstructImportExportOrCondition] 
+        'end [rule_function]                                            [NL][NL]
+end define
+
+redefine ruleApplication
+        [SP] [type] [SP]
+    |   ...
+end define

@@ -1,4 +1,4 @@
-% ReplaceSingle-Turing.txl: Replace a variable declaration with its inverse
+% ReplaceSingle-Turing.txl: Replace a single assignement expression with a constant
 % Hayden Pfeiffer
 % Queen's University, June 2021
 

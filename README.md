@@ -8,11 +8,11 @@ A TXL installation is required to execute the rules in this project, and can be 
 
 # Usage
 
-To transform TXL rules utilizing the anchored "..." notation, perform a TXL transformation using `txl <your txl file> rules/AnchoredDots.txl`
+To transform TXL rules utilizing the anchored "..." notation, perform a TXL transformation using `txl <your txl file> rules/Dots.txl`
 
-Example: `txl test/txl/MoveToStartMulti-Turing.txl rules/AnchoredDots.txl > test/transforms/temp-MoveToStartMulti-Turing.txl`
+Example: `txl test/txl/MoveToStartMulti-Turing.txl rules/Dots.txl > test/transforms/temp-MoveToStartMulti-Turing.txl`
 
-To transform all TXL files in the `test/txl` directory, run `test/runTests.sh rules/AnchoredDots.txl`. This will save each test file transformation as `test/transforms/temp-<filename>`
+To transform all TXL files in the `test/txl` directory, run `test/runTests.sh rules/Dots.txl`. This will save each test file transformation as `test/transforms/temp-<filename>`
 
 This will also create the transformation for each target language (`test/Turing`, `test/c`, and `test/java`) in the `test/output` directory. 
 
